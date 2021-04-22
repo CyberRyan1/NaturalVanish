@@ -51,5 +51,6 @@ levels higher than or equal to the player's level).
 > I found a bug/I have a suggestion! Where should I put it?
 
 If you found a bug, please open an issue on the GitHub, describe what the bug is, and add
-the `bug` tag, as well as what severity you think the bug is. For suggestions, the process
-is similar to that of bugs, however please just add the `suggestion` tag instead of the `bug` tag.
+the `bug` label, as well as what severity you think the bug is. For suggestions, the process
+is similar to that of bugs, however please just add the `suggestion` label instead of 
+the `bug` label.
