@@ -1,0 +1,9 @@
+name: NaturalVanish
+version: ${project.version}
+main: com.github.cyberryan1.NaturalVanish
+api-version: 1.16
+authors: [ CyberRyan ]
+description: Vanish plugin
+commands:
+  vanish:
+    aliases: ["v"]
