@@ -17,7 +17,7 @@ public class Join implements Listener {
         // Add the player to any players who wouldn't be able to see the player
         if ( VanishUtils.checkVanished( event.getPlayer() ) ) {
             for ( Player p : Bukkit.getOnlinePlayers() ) {
-                if ( VaultUtils.hasPerms( p, ConfigUtils.getStr( "vanish.use.permission" ) ) == false ) {
+                if ( VaultUtils.hasPerms( p, ConfigUtils.getStr( "vanish.permission" ) ) == false ) {
                     p.hidePlayer( Utilities.getPlugin(), event.getPlayer() );
                 }
                 else if ( VanishUtils.getVanishLevel( event.getPlayer() ) <= VanishUtils.getMaxVanishLevel( p ) == false ) {
@@ -44,7 +44,7 @@ public class Join implements Listener {
             DataUtils.save();
 
             VanishUtils.disableVanish( event.getPlayer() );
-            event.getPlayer().sendMessage( ConfigUtils.getColoredStr( "vanish.toggle-others.offline.disabled-target" ) );
+            event.getPlayer().sendMessage( ConfigUtils.getColoredStr( "vanish.toggle.target.off-disabled" ) );
         }
 
 
@@ -55,7 +55,7 @@ public class Join implements Listener {
             DataUtils.save();
 
             VanishUtils.enableVanish( event.getPlayer() );
-            event.getPlayer().sendMessage( ConfigUtils.getColoredStr( "vanish.toggle-others.offline.enabled-target" ) );
+            event.getPlayer().sendMessage( ConfigUtils.getColoredStr( "vanish.toggle.target.off-enabled" ) );
         }
 
 
@@ -71,14 +71,14 @@ public class Join implements Listener {
 
 
         // checking if the player who joined is vanished and adding that vanish
-        if ( ConfigUtils.getBool( "vanish." + event.getPlayer().getUniqueId().toString() + ".enabled" ) ) {
+        if ( DataUtils.getBool( "vanish." + event.getPlayer().getUniqueId().toString() + ".enabled" ) ) {
             int vanishLevel = VanishUtils.getVanishLevel( event.getPlayer() );
             for ( Player p : Bukkit.getServer().getOnlinePlayers() ) {
-                if ( p.hasPermission( ConfigUtils.getStr( "vanish.use.permission" ) ) == false ) {
+                if ( p.hasPermission( ConfigUtils.getStr( "vanish.permission" ) ) == false ) {
                     p.hidePlayer( Utilities.getPlugin(), event.getPlayer() );
                 }
                 else if ( vanishLevel <= VanishUtils.getMaxVanishLevel( p ) ) {
-                    p.sendMessage( ConfigUtils.getColoredStr( "vanish.level." + vanishLevel + ".enable-message", event.getPlayer() ) );
+                    p.sendMessage( ConfigUtils.getColoredStr( "vanish.level." + vanishLevel + ".enable-msg", event.getPlayer() ) );
                 }
                 else {
                     p.hidePlayer( Utilities.getPlugin(), event.getPlayer() );
@@ -86,7 +86,7 @@ public class Join implements Listener {
             }
 
             // if to cancel the join message or not (config)
-            if ( ConfigUtils.getBool( "vanish.join.cancel-message" ) ) {
+            if ( ConfigUtils.getBool( "vanish.join.cancel-msg" ) ) {
                 event.setJoinMessage( null );
             }
         }

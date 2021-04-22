@@ -32,22 +32,28 @@ public class ConfigUtils {
 
     // returns a boolean value from the path
     public static boolean getBool( String path ) {
+        checkWarn( path );
         return config.getConfig().getBoolean( path );
     }
 
 
     // returns an int from the path
     public static int getInt( String path ) {
+        checkWarn( path );
         return config.getConfig().getInt( path );
     }
 
 
     // returns a float from the path
-    public static float getFloat( String path ) { return ( float ) config.getConfig().getDouble( path ); }
+    public static float getFloat( String path ) {
+        checkWarn( path );
+        return ( float ) config.getConfig().getDouble( path );
+    }
 
 
     // returns a string from the path
     public static String getStr( String path ) {
+        checkWarn( path );
         return config.getConfig().getString( path );
     }
 
@@ -56,6 +62,7 @@ public class ConfigUtils {
     // returns a colored string from the path
     public static String getColoredStr( String path ) {
         if ( config.getConfig().getString( path ) == null ) { return null; }
+        checkWarn( path );
         return ChatColor.translateAlternateColorCodes( '&', config.getConfig().getString( path ) );
     }
 
@@ -85,5 +92,14 @@ public class ConfigUtils {
     public static String getColoredStr( String path, CommandSender sender, String arg ) {
         if ( getColoredStr( path ) == null ) { return null; }
         return getColoredStr( path, sender ).replace( "[ARG]", arg );
+    }
+
+
+
+    // sends a console warn if a path returns null
+    private static void checkWarn( String path ) {
+        if ( config.getConfig().get( path ) == null ) {
+            Utilities.logWarn( "Config path " + path + " was not found!" );
+        }
     }
 }

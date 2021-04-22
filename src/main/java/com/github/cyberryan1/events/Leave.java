@@ -13,13 +13,13 @@ public class Leave implements Listener {
     public void onPlayerQuit( PlayerQuitEvent event ) {
         if ( DataUtils.getBool( "vanish." + event.getPlayer().getUniqueId().toString() + ".enabled" ) ) {
             // disable the vanish (config)
-            if ( ConfigUtils.getBool( "vanish.leave.disable-vanish" ) ) {
+            if ( ConfigUtils.getBool( "vanish.leave.disable" ) ) {
                 VanishUtils.disableVanish( event.getPlayer() );
             }
 
 
             // cancel the quit message (config)
-            if ( ConfigUtils.getBool( "vanish.leave.cancel-message" ) ) {
+            if ( ConfigUtils.getBool( "vanish.leave.cancel-msg" ) ) {
                 event.setQuitMessage( null );
             }
         }

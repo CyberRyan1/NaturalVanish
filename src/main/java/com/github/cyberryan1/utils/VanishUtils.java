@@ -31,14 +31,14 @@ public class VanishUtils {
 
 
     public static void enableVanish( Player player ) {
-        String usePerm = ConfigUtils.getStr( "vanish.use.permission" );
+        String usePerm = ConfigUtils.getStr( "vanish.permission" );
         int playerLevel = getVanishLevel( player );
         String playerUUID = player.getUniqueId().toString();
 
         DataUtils.set( "vanish." + playerUUID + ".enabled", true );
         DataUtils.set( "vanish." + playerUUID + ".level", playerLevel );
 
-        String vanishedMsg = ConfigUtils.getColoredStr( "vanish.level." + playerLevel + ".enable-message", player );
+        String vanishedMsg = ConfigUtils.getColoredStr( "vanish.level." + playerLevel + ".enable-msg", player );
 
         for ( Player p : Bukkit.getOnlinePlayers() ) {
             if ( VaultUtils.hasPerms( p, usePerm ) == false ) {
@@ -53,18 +53,18 @@ public class VanishUtils {
         }
 
         // config: enable flight
-        if ( ConfigUtils.getBool( "vanish.use.enable-flight" ) ) {
+        if ( ConfigUtils.getBool( "vanish.use.flight.enable" ) ) {
             // config: reset flight
-            if ( ConfigUtils.getBool( "vanish.use.reset-flight" ) ) {
+            if ( ConfigUtils.getBool( "vanish.use.flight.reset" ) ) {
                 DataUtils.set( "vanish." + playerUUID + ".previous.flight-state", player.getAllowFlight() );
             }
 
             player.setAllowFlight( true );
 
             // config: flight speed
-            if ( ConfigUtils.getFloat( "vanish.use.flight-speed" ) > 1 ) {
+            if ( ConfigUtils.getFloat( "vanish.use.flight.speed" ) > 1 ) {
                 DataUtils.set( "vanish." + playerUUID + ".previous.flight-speed", player.getFlySpeed() );
-                player.setFlySpeed( 0.1f * ConfigUtils.getFloat( "vanish.use.flight-speed" ) );
+                player.setFlySpeed( 0.1f * ConfigUtils.getFloat( "vanish.use.flight.speed" ) );
             }
         }
 
@@ -112,10 +112,10 @@ public class VanishUtils {
 
 
     public static void disableVanish( Player player ) {
-        String usePerm = ConfigUtils.getStr( "vanish.use.permission" );
+        String usePerm = ConfigUtils.getStr( "vanish.permission" );
         int playerLevel = getVanishLevel( player );
         String playerUUID = player.getUniqueId().toString();
-        String unvanishedMsg = ConfigUtils.getColoredStr( "vanish.level." + playerLevel + ".disable-message", player );
+        String unvanishedMsg = ConfigUtils.getColoredStr( "vanish.level." + playerLevel + ".disable-msg", player );
 
         for ( Player p : Bukkit.getOnlinePlayers() ) {
             p.showPlayer( Utilities.getPlugin(), player );
@@ -126,14 +126,14 @@ public class VanishUtils {
         }
 
         // config: enable flight
-        if ( ConfigUtils.getBool( "vanish.use.enable-flight" ) ) {
+        if ( ConfigUtils.getBool( "vanish.use.flight.enable" ) ) {
             // config: reset flight
-            if ( ConfigUtils.getBool( "vanish.use.reset-flight" ) ) {
+            if ( ConfigUtils.getBool( "vanish.use.flight.reset" ) ) {
                 player.setAllowFlight( DataUtils.getBool( "vanish." + playerUUID + ".previous.flight-state" ) );
             }
 
             // config: flight-speed
-            if ( ConfigUtils.getInt( "vanish.use.flight-speed" ) > 1 ) {
+            if ( ConfigUtils.getInt( "vanish.use.flight.speed" ) > 1 ) {
                 player.setFlySpeed( DataUtils.getFloat( "vanish." + playerUUID + ".previous.flight-speed" ) );
             }
         }
@@ -222,7 +222,7 @@ public class VanishUtils {
         if ( VaultUtils.hasPerms( target, ConfigUtils.getStr( "vanish.level.4.permission" ) ) ) { return 4; }
         if ( VaultUtils.hasPerms( target, ConfigUtils.getStr( "vanish.level.3.permission" ) ) ) { return 3; }
         if ( VaultUtils.hasPerms( target, ConfigUtils.getStr( "vanish.level.2.permission" ) ) ) { return 2; }
-        if ( VaultUtils.hasPerms( target, ConfigUtils.getStr( "vanish.use.permission" ) ) ) { return 1; }
+        if ( VaultUtils.hasPerms( target, ConfigUtils.getStr( "vanish.permission" ) ) ) { return 1; }
 
         return 0;
     }
