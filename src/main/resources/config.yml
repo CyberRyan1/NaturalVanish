@@ -211,7 +211,7 @@ vanish:
   checklevel-other:
 
     # What the permission should be to use this command
-    permission: "naturalvanish.checklevel.other"
+    permission: "naturalvanish.checklevel.others"
 
     # What to send if the target hasn't joined the server before
     not-joined-msg: "&a[ARG]&7 has never joined the server before!"
@@ -232,7 +232,7 @@ vanish:
   check-other:
 
     # What the permission should be to use this command
-    permission: "naturalvanish.check.other"
+    permission: "naturalvanish.check.others"
 
 
   #
