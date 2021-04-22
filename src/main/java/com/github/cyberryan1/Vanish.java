@@ -385,7 +385,6 @@ public class Vanish implements CommandExecutor {
 
 
 
-        // TODO need to redo the messages to support the new config
         // reload sub-command
         else if ( args[0].equalsIgnoreCase( "reload" ) ) {
             if ( VaultUtils.hasPerms( sender, ConfigUtils.getStr( "vanish.reload.permission" ) ) == false ) {
