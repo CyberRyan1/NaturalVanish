@@ -6,7 +6,7 @@ the flight speed of vanished players, giving them night vision, and much more.
 
 ---
 ## Downloads
-Download from Spigot
+[Download from Spigot](https://www.spigotmc.org/resources/naturalvanish.91617/)
 
 ---
 ## General Features
