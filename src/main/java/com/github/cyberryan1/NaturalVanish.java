@@ -41,12 +41,7 @@ public final class NaturalVanish extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents( new InventoryClick(), this );
         this.getServer().getPluginManager().registerEvents( new Join(), this );
         this.getServer().getPluginManager().registerEvents( new Leave(), this );
-    }
 
-
-
-    @Override
-    public void onDisable() {
-
+        ConfigUtils.getConfigManager().reloadConfig();
     }
 }
