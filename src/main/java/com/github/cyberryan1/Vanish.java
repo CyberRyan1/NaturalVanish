@@ -395,6 +395,11 @@ public class Vanish implements CommandExecutor {
                 sender.sendMessage( Utilities.getColored( "&7Attempting to reload &aNaturalVanish&7..." ) );
                 Utilities.logInfo( Utilities.getColored( "Attempting to reload NaturalVanish..." ) );
 
+                if ( ConfigUtils.getConfigManager().getConfigFile().exists() == false || ConfigUtils.getConfigManager().getConfigFile() == null ) {
+                    ConfigUtils.getConfigManager().saveDefaultConfig();
+                }
+
+
                 ConfigUtils.getConfigManager().reloadConfig();
                 DataUtils.getDataManager().reloadConfig();
 

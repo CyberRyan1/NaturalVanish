@@ -89,6 +89,11 @@ public class Join implements Listener {
             if ( ConfigUtils.getBool( "vanish.join.cancel-msg" ) ) {
                 event.setJoinMessage( null );
             }
+
+            // if to set the player's bossbar or not (config)
+            if ( ConfigUtils.getBool( "vanish.use.bossbar.enable" ) ) {
+                BossbarUtils.addBossbar( event.getPlayer() );
+            }
         }
     }
 }

@@ -76,6 +76,23 @@ vanish:
     # Should the player's helmet be set to their skull when they vanish?
     skull-helmet: true
 
+    bossbar:
+
+      # Should a bossbar be sent to vanished players?
+      enable: true
+
+      # What the title/text is on the bossbar
+      # [LEVEL] = player's vanish level
+      title: "&fCurrently Vanished &8(&7Level [LEVEL]&8)"
+
+      # The color of the bossbar
+      # Colors: blue, green, pink, purple, red, white, or yellow
+      color: "white"
+
+      # The percentage of the bar that is filled
+      # 100 = full, 0 = empty
+      percent: 100
+
 
   #
   # /vanish setlevel (level)

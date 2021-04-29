@@ -107,6 +107,11 @@ public class VanishUtils {
             player.setWalkSpeed( 0.1f * ConfigUtils.getInt( "vanish.use.walk-speed" ) );
         }
 
+        // config: bossbar
+        if ( ConfigUtils.getBool( "vanish.use.bossbar.enable" ) ) {
+            BossbarUtils.addBossbar( player );
+        }
+
         DataUtils.save();
     }
 
@@ -168,6 +173,11 @@ public class VanishUtils {
         // config: walk speed
         if ( ConfigUtils.getInt( "vanish.use.walk-speed" ) > 1 ) {
             player.setWalkSpeed( DataUtils.getFloat( "vanish." + playerUUID + ".previous.walk-speed" ) );
+        }
+
+        // config: bossbar
+        if ( ConfigUtils.getBool( "vanish.use.bossbar.enable" ) ) {
+            BossbarUtils.removeBossbar( player );
         }
 
         DataUtils.set( "vanish." + playerUUID, null );

@@ -43,5 +43,8 @@ public final class NaturalVanish extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents( new Leave(), this );
 
         ConfigUtils.getConfigManager().reloadConfig();
+
+        // Remove all bossbars
+        BossbarUtils.removeAllBossbars();
     }
 }
