@@ -51,6 +51,13 @@ public class ConfigUtils {
     }
 
 
+    // returns a double from the path
+    public static double getDouble( String path ) {
+        checkWarn( path );
+        return config.getConfig().getDouble( path );
+    }
+
+
     // returns a string from the path
     public static String getStr( String path ) {
         checkWarn( path );
