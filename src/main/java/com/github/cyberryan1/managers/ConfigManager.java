@@ -50,6 +50,12 @@ public class ConfigManager {
 
 
 
+    public File getConfigFile() {
+        return configFile;
+    }
+
+
+
     public void saveConfig() {
         if ( this.dataConfig == null || this.configFile == null ) {
             plugin.getLogger().log( Level.WARNING, "dataConfig == null || configFile == null, returning " );
