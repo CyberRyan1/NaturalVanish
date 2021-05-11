@@ -1,9 +1,6 @@
 package com.github.cyberryan1;
 
-import com.github.cyberryan1.events.InventoryClick;
-import com.github.cyberryan1.events.Join;
-import com.github.cyberryan1.events.Leave;
-import com.github.cyberryan1.events.TabComplete;
+import com.github.cyberryan1.events.*;
 import com.github.cyberryan1.managers.ConfigManager;
 import com.github.cyberryan1.managers.DataManager;
 import com.github.cyberryan1.utils.*;
@@ -24,7 +21,7 @@ public final class NaturalVanish extends JavaPlugin {
 
 
 
-    // TODO make sure the plugin is compatible with other plugins, such as essentials, etc.
+    // TODO add silent chest opening
     @Override
     public void onEnable() {
         config = new ConfigManager( this );
@@ -41,6 +38,8 @@ public final class NaturalVanish extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents( new InventoryClick(), this );
         this.getServer().getPluginManager().registerEvents( new Join(), this );
         this.getServer().getPluginManager().registerEvents( new Leave(), this );
+        this.getServer().getPluginManager().registerEvents( new ItemDrop(), this );
+        this.getServer().getPluginManager().registerEvents( new ItemPickup(), this );
 
         ConfigUtils.getConfigManager().reloadConfig();
 

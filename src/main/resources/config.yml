@@ -302,3 +302,39 @@ vanish:
 
     # Should the player's vanish be disabled (true) when they leave while vanished or should it stay enabled (false)
     disable: false
+
+
+  #
+  # Other events
+  #
+  other-events:
+
+    # When a vanished player tries to pickup an item
+    item-pickup:
+
+      # Should the event be cancelled
+      cancel: true
+
+      # What the message should be sent if it was cancelled
+      cancel-msg: "&7You cannot pickup items while vanished"
+
+      # If the bypass permission (below) should be enabled
+      bypass: true
+
+      # The permission to bypass this event being canelled
+      bypass-perm: "naturalvanish.itempickup.bypass"
+
+    # When a vanished player tries to drop an item
+    item-drop:
+
+      # Should the event be cancelled
+      cancel: true
+
+      # What the message should be sent if it was cancelled
+      cancel-msg: "&7You cannot drop items while vanished"
+
+      # If the bypass permission (below) should be enabled
+      bypass: true
+
+      # The permission to bypass this event being canelled
+      bypass-perm: "naturalvanish.itemdrop.bypass"
