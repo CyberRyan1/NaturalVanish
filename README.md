@@ -34,6 +34,12 @@ the flight speed of vanished players, giving them night vision, and much more.
 | /vanish list | naturalvanish.list.all | List **all** the players who are vanished, no matter the vanish level |
 | /vanish reload | naturalvanish.reload | Reload the config and data |
 
+## Event Permissions
+#### This is stuff that happens when a player does something, for example right clicking
+| Event | Default Permission | Description |
+| ---------- | -------------- | -------------- |
+| Item Pickup Bypass | naturalvanish.itempickup.bypass | Allows a player to pick up an item while vanished, even when it should be cancelled |
+| Item Drop Bypass | naturalvanish.itemdrop.bypass | Allows a player to drop items while vanished, even if it would normally be cancelled |
 ---
 
 ## FAQ
