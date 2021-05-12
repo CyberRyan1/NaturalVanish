@@ -21,7 +21,6 @@ public final class NaturalVanish extends JavaPlugin {
 
 
 
-    // TODO add silent chest opening
     @Override
     public void onEnable() {
         config = new ConfigManager( this );
@@ -40,6 +39,7 @@ public final class NaturalVanish extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents( new Leave(), this );
         this.getServer().getPluginManager().registerEvents( new ItemDrop(), this );
         this.getServer().getPluginManager().registerEvents( new ItemPickup(), this );
+        this.getServer().getPluginManager().registerEvents( new Interact(), this );
 
         ConfigUtils.getConfigManager().reloadConfig();
 

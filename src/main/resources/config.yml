@@ -338,3 +338,13 @@ vanish:
 
       # The permission to bypass this event being canelled
       bypass-perm: "naturalvanish.itemdrop.bypass"
+
+    # When a vanish player opens a chest, trapped chest, or enderchest
+    chest-open:
+
+      # Should the opening be silenced
+      silent: true
+
+      # What the message should be sent if it was silenced
+      # Put to "" if you don't want a message to be sent
+      silent-msg: ""
