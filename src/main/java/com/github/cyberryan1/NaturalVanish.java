@@ -21,6 +21,8 @@ public final class NaturalVanish extends JavaPlugin {
 
 
 
+    // TODO add the following events as cancellable: PvP (not started), damage (working on), block break/place (done), interact (done), hunger (not started)
+    // TODO allow messages from events to not be sent if they put "" in the config file
     @Override
     public void onEnable() {
         config = new ConfigManager( this );
@@ -40,6 +42,9 @@ public final class NaturalVanish extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents( new ItemDrop(), this );
         this.getServer().getPluginManager().registerEvents( new ItemPickup(), this );
         this.getServer().getPluginManager().registerEvents( new Interact(), this );
+        this.getServer().getPluginManager().registerEvents( new BlockPlace(), this );
+        this.getServer().getPluginManager().registerEvents( new BlockBreak(), this );
+        this.getServer().getPluginManager().registerEvents( new Damage(), this );
 
         ConfigUtils.getConfigManager().reloadConfig();
 

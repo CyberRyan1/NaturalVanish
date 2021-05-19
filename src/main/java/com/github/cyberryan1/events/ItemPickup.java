@@ -21,7 +21,8 @@ public class ItemPickup implements Listener {
                     VaultUtils.hasPerms( event.getPlayer(), ConfigUtils.getStr( "vanish.other-events.item-pickup.bypass-perm" ) ) == false ) {
                 event.setCancelled( true );
 
-                if ( cooldown.contains( event.getPlayer().getName() ) == false ) {
+                if ( ConfigUtils.getStr( "vanish.other-events.item-pickup.cancel-msg" ).equals( "" ) == false &&
+                        cooldown.contains( event.getPlayer().getName() ) == false ) {
                     event.getPlayer().sendMessage( ConfigUtils.getColoredStr( "vanish.other-events.item-pickup.cancel-msg" ) );
 
                     cooldown.add( event.getPlayer().getName() );

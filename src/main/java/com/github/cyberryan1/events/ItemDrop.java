@@ -16,7 +16,10 @@ public class ItemDrop implements Listener {
             if ( ConfigUtils.getBool( "vanish.other-events.item-drop.bypass" ) == false ||
                     VaultUtils.hasPerms( event.getPlayer(), ConfigUtils.getStr( "vanish.other-events.item-drop.bypass-perm" ) ) == false ) {
                 event.setCancelled( true );
-                event.getPlayer().sendMessage( ConfigUtils.getColoredStr( "vanish.other-events.item-drop.cancel-msg", event.getPlayer() ) );
+
+                if ( ConfigUtils.getStr( "vanish.other-events.item-drop.cancel-msg" ).equals( "" ) == false ) {
+                    event.getPlayer().sendMessage( ConfigUtils.getColoredStr( "vanish.other-events.item-drop.cancel-msg", event.getPlayer() ) );
+                }
             }
         }
     }

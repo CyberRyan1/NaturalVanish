@@ -308,6 +308,7 @@ vanish:
   # Other events
   #
   other-events:
+    # Note: for any of the messages in this section, setting them to "" will not send the message
 
     # When a vanished player tries to pickup an item
     item-pickup:
@@ -326,25 +327,41 @@ vanish:
 
     # When a vanished player tries to drop an item
     item-drop:
-
-      # Should the event be cancelled
       cancel: true
-
-      # What the message should be sent if it was cancelled
       cancel-msg: "&7You cannot drop items while vanished"
-
-      # If the bypass permission (below) should be enabled
       bypass: true
-
-      # The permission to bypass this event being canelled
       bypass-perm: "naturalvanish.itemdrop.bypass"
 
-    # When a vanish player opens a chest, trapped chest, or enderchest
+    # When a vanished player opens a chest, trapped chest, or enderchest
     chest-open:
 
       # Should the opening be silenced
       silent: true
 
       # What the message should be sent if it was silenced
-      # Put to "" if you don't want a message to be sent
       silent-msg: ""
+
+    # When a vanished player interacts with blocks, like pressure plates, buttons, etc.
+    interact:
+      cancel: true
+      cancel-msg: "&7You cannot interact with redstone items while vanished"
+      bypass: true
+      bypass-perm: "naturalvanish.redstone.bypass"
+
+    # When a vanished player takes any type of damage
+    damage:
+      cancel: true
+
+    # When a vanished player attacks another player
+    pvp:
+      cancel: true
+      cancel-msg: "&7You cannot hit others while vanished"
+      bypass: true
+      bypass-perm: "naturalvanish.pvp.bypass"
+
+    # When a vanished player places or breaks a block
+    build:
+      cancel: true
+      cancel-msg: "&7You cannot build while vanished"
+      bypass: true
+      bypass-perm: "naturalvanish.build.bypass"
