@@ -112,6 +112,12 @@ public class VanishUtils {
             BossbarUtils.addBossbar( player );
         }
 
+        // config (other-events): hunger
+        if ( ConfigUtils.getBool( "vanish.other-events.hunger.cancel" ) ) {
+            DataUtils.set( "vanish." + playerUUID + ".previous.hunger", player.getFoodLevel() );
+            player.setFoodLevel( 20 );
+        }
+
         DataUtils.save();
     }
 
@@ -178,6 +184,11 @@ public class VanishUtils {
         // config: bossbar
         if ( ConfigUtils.getBool( "vanish.use.bossbar.enable" ) ) {
             BossbarUtils.removeBossbar( player );
+        }
+
+        // config (other-events): hunger
+        if ( ConfigUtils.getBool( "vanish.other-events.hunger.cancel" ) ) {
+            player.setFoodLevel( DataUtils.getInt( "vanish." + playerUUID + ".previous.hunger" ) );
         }
 
         DataUtils.set( "vanish." + playerUUID, null );

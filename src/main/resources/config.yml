@@ -365,3 +365,7 @@ vanish:
       cancel-msg: "&7You cannot build while vanished"
       bypass: true
       bypass-perm: "naturalvanish.build.bypass"
+
+    # When a vansihed player's hunger changes
+    hunger:
+      cancel: true
