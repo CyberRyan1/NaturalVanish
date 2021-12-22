@@ -4,6 +4,7 @@ main: com.github.cyberryan1.NaturalVanish
 api-version: 1.16
 authors: [ CyberRyan ]
 description: Vanish plugin
+depend: [ Vault ]
 commands:
   vanish:
     aliases: ["v"]
