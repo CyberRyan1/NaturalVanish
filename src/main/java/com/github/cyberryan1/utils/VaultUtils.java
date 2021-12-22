@@ -17,14 +17,11 @@ public class VaultUtils {
 
 
     public VaultUtils() {
-        if ( setupEconomy() == false ) {
+        if ( setupPermissions() == false ) {
             Utilities.logError( "Disabled due to no Vault dependency found!" );
             Utilities.getPluginManager().disablePlugin( Utilities.getPlugin() );
             return;
         }
-
-        setupPermissions();
-        setupChat();
     }
 
 
@@ -64,31 +61,17 @@ public class VaultUtils {
 
 
 
-    private boolean setupEconomy() {
+    private boolean setupPermissions() {
         if ( Utilities.getPluginManager().getPlugin( "Vault" ) == null ) {
             return false;
         }
 
-        RegisteredServiceProvider<Economy> rsp = Utilities.getPlugin().getServer().getServicesManager().getRegistration( Economy.class );
+        RegisteredServiceProvider<Permission> rsp = Utilities.getPlugin().getServer().getServicesManager().getRegistration( Permission.class );
         if ( rsp == null ) {
             return false;
         }
 
-        economy = rsp.getProvider();
-        return economy != null;
-    }
-
-
-    private boolean setupPermissions() {
-        RegisteredServiceProvider<Permission> rsp = Utilities.getPlugin().getServer().getServicesManager().getRegistration( Permission.class );
         permissions = rsp.getProvider();
         return permissions != null;
-    }
-
-
-    private boolean setupChat() {
-        RegisteredServiceProvider<Chat> rsp = Utilities.getPlugin().getServer().getServicesManager().getRegistration( Chat.class );
-        chat = rsp.getProvider();
-        return chat != null;
     }
 }
