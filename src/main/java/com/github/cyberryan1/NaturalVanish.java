@@ -1,11 +1,16 @@
 package com.github.cyberryan1;
 
+import ch.njol.skript.Skript;
+import ch.njol.skript.SkriptAddon;
 import com.github.cyberryan1.events.*;
 import com.github.cyberryan1.managers.ConfigManager;
 import com.github.cyberryan1.managers.DataManager;
 import com.github.cyberryan1.utils.*;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import skriptelements.conditions.RegisterConditions;
+
+import java.io.IOException;
 
 public final class NaturalVanish extends JavaPlugin {
 
@@ -19,7 +24,9 @@ public final class NaturalVanish extends JavaPlugin {
     public DataUtils dataUtils;
     public VaultUtils vaultUtils;
 
-
+    // Skript
+    public SkriptAddon addon;
+    public boolean enabled = true;
     
     @Override
     public void onEnable() {
@@ -50,5 +57,25 @@ public final class NaturalVanish extends JavaPlugin {
 
         // Remove all bossbars
         BossbarUtils.removeAllBossbars();
+
+        // Attempt to register Skript syntax
+        registerSkript();
+    }
+
+    private void registerSkript() {
+        try {
+            addon = Skript.registerAddon( this );
+            try {
+                addon.loadClasses( "com.github.cyberryan1", "skriptelements" );
+            } catch ( IOException e ) {
+                Utilities.logWarn( "Could not enable as a skript addon, will still enable without this syntax!" );
+                enabled = false;
+            }
+            Utilities.logInfo( "Enabled as a skript addon" );
+            RegisterConditions.register();
+        } catch ( NoClassDefFoundError error ) {
+            Utilities.logWarn( "Could not enable as a skript addon, will still enable without this syntax!" );
+            enabled = false;
+        }
     }
 }
