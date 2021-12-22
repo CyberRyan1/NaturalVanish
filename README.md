@@ -60,3 +60,26 @@ If you found a bug, please open an issue on the GitHub, describe what the bug is
 the `bug` label, as well as what severity you think the bug is. For suggestions, the process
 is similar to that of bugs, however please just add the `suggestion` label instead of 
 the `bug` label.
+
+---
+## Skript Documentation
+NaturalVanish does offer support for Skript. Documentation for everything NaturalVanish supports can be found below.
+---
+
+### Conditions
+
+---
+
+**Is Vanished**\
+Checks if a player is vanished through NaturalVanish.\
+`%offlineplayer% is vanished`\
+`%offlineplayer% is(n't| not) vanished`
+  ```
+  command /checkvanished [<player>]:
+      trigger:
+          if arg is vanished:
+              send "%arg% is vanished"
+          if arg is not vanished:
+              send "%arg% is not vanished"
+  ```
+---
