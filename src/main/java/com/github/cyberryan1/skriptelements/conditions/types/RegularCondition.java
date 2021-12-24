@@ -1,4 +1,4 @@
-package skriptelements.conditions.types;
+package com.github.cyberryan1.skriptelements.conditions.types;
 
 import ch.njol.skript.lang.Condition;
 import ch.njol.skript.lang.Expression;

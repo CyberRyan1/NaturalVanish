@@ -5,10 +5,10 @@ import ch.njol.skript.SkriptAddon;
 import com.github.cyberryan1.events.*;
 import com.github.cyberryan1.managers.ConfigManager;
 import com.github.cyberryan1.managers.DataManager;
+import com.github.cyberryan1.skriptelements.conditions.RegisterConditions;
 import com.github.cyberryan1.utils.*;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import skriptelements.conditions.RegisterConditions;
 
 import java.io.IOException;
 

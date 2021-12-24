@@ -1,13 +1,13 @@
-package skriptelements.conditions;
+package com.github.cyberryan1.skriptelements.conditions;
 
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser;
 import ch.njol.util.Kleenean;
+import com.github.cyberryan1.skriptelements.conditions.types.RegularCondition;
 import com.github.cyberryan1.utils.VanishUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
-import skriptelements.conditions.types.RegularCondition;
 
 public class CondPlayerVanished extends RegularCondition {
 

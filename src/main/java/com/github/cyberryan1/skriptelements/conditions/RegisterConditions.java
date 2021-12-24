@@ -1,6 +1,7 @@
-package skriptelements.conditions;
+package com.github.cyberryan1.skriptelements.conditions;
 
 import ch.njol.skript.Skript;
+import com.github.cyberryan1.skriptelements.conditions.CondPlayerVanished;
 
 public class RegisterConditions {
 
