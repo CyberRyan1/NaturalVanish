@@ -42,8 +42,11 @@ public class BossbarUtils {
     // Remove all bossbars
     public static void removeAllBossbars() {
         Iterator<KeyedBossBar> bossbarList = Bukkit.getBossBars();
-        while ( bossbarList.hasNext() ) {
-            Bukkit.removeBossBar( bossbarList.next().getKey() );
+        while ( bossbarList != null && bossbarList.hasNext() ) {
+            KeyedBossBar bossbar = bossbarList.next();
+            if ( bossbar != null ) {
+                Bukkit.removeBossBar( bossbar.getKey() );
+            }
         }
     }
 
