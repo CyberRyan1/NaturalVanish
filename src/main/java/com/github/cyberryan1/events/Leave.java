@@ -1,5 +1,6 @@
 package com.github.cyberryan1.events;
 
+import com.github.cyberryan1.utils.BossbarUtils;
 import com.github.cyberryan1.utils.ConfigUtils;
 import com.github.cyberryan1.utils.DataUtils;
 import com.github.cyberryan1.utils.VanishUtils;
@@ -21,6 +22,12 @@ public class Leave implements Listener {
             // cancel the quit message (config)
             if ( ConfigUtils.getBool( "vanish.leave.cancel-msg" ) ) {
                 event.setQuitMessage( null );
+            }
+
+
+            // remove the player's bossbar (if enabled)
+            if ( ConfigUtils.getBool( "vanish.use.bossbar.enable" ) ) {
+                BossbarUtils.removeBossbar( event.getPlayer() );
             }
         }
     }
