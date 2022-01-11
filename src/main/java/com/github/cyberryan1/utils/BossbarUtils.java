@@ -8,7 +8,9 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.boss.KeyedBossBar;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class BossbarUtils {
 
@@ -41,12 +43,11 @@ public class BossbarUtils {
 
     // Remove all bossbars
     public static void removeAllBossbars() {
-        Iterator<KeyedBossBar> bossbarList = Bukkit.getBossBars();
-        while ( bossbarList != null && bossbarList.hasNext() ) {
-            KeyedBossBar bossbar = bossbarList.next();
-            if ( bossbar != null ) {
-                Bukkit.removeBossBar( bossbar.getKey() );
-            }
+        Iterator<KeyedBossBar> bossbarIterator = Bukkit.getBossBars();
+        List<KeyedBossBar> bossbarList = new ArrayList<>();
+        bossbarIterator.forEachRemaining( bossbarList::add );
+        for ( int index = bossbarList.size() - 1; index >= 0; index-- ) {
+            Bukkit.removeBossBar( bossbarList.get( index ).getKey() );
         }
     }
 
