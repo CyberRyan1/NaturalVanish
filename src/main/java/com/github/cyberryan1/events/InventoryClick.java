@@ -15,7 +15,10 @@ public class InventoryClick implements Listener {
     public void onInventoryClick( InventoryClickEvent event ) {
         if ( ConfigUtils.getBool( "vanish.use.skull-helmet" ) ) {
             if ( DataUtils.getConfig().contains( "vanish." + event.getWhoClicked().getUniqueId().toString() + ".enabled" ) ) {
-                if ( event.getCurrentItem().equals( ( ( Player ) event.getWhoClicked() ).getInventory().getHelmet() ) ) {
+                if ( event.getCurrentItem() == null ) { return; }
+                if ( event.getWhoClicked().getInventory().getHelmet() == null ) { return; }
+
+                if ( event.getCurrentItem().equals( event.getWhoClicked().getInventory().getHelmet() ) ) {
                     if ( event.getCurrentItem().equals( Utilities.getPlayerHead( ( Player ) event.getWhoClicked() ) ) ) {
                         event.setCancelled( true );
                         Player player = ( Player ) event.getWhoClicked();
