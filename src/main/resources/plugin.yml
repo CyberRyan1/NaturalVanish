@@ -5,6 +5,7 @@ api-version: 1.16
 authors: [ CyberRyan ]
 description: Vanish plugin
 depend: [ Vault ]
+softdepend: [ Skript ]
 commands:
   vanish:
     aliases: ["v"]

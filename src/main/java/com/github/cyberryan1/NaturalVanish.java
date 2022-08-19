@@ -59,10 +59,6 @@ public final class NaturalVanish extends JavaPlugin {
         BossbarUtils.removeAllBossbars();
 
         // Attempt to register Skript syntax
-        registerSkript();
-    }
-
-    private void registerSkript() {
         try {
             addon = Skript.registerAddon( this );
             try {
