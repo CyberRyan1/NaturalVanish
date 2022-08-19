@@ -32,8 +32,8 @@ public enum Settings {
 
     // Vanish Setlevel Settings
     VANISH_SETLEVEL_PERMISSION( "vanish.level.permission", "string" ),
-    VANISH_HIGH_MSG( "vanish.level.high-msg", "string" ),
-    VANISH_INVALID_LEVEL_MSG( "vanish.level.invalid-level-msg", "string" ),
+    VANISH_SETLEVEL_HIGH_MSG( "vanish.level.high-msg", "string" ),
+    VANISH_SETLEVEL_INVALID_LEVEL_MSG( "vanish.level.invalid-level-msg", "string" ),
 
     VANISH_LEVEL_ONE_ENABLE_MSG( "vanish.level.1.enable-msg", "string" ),
     VANISH_LEVEL_ONE_DISABLE_MSG( "vanish.level.1.disable-msg", "string" ),
