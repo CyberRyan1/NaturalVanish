@@ -196,7 +196,7 @@ vanish:
       off-enabled: "&aEnabled&7 the vanish for &a[ARG]&7 when they next join"
 
       # ... target is offline and their vanish was disabled
-      off-disabled: "&cDisabled&7 ths vanish for &a[ARG]&7 when they next join"
+      off-disabled: "&cDisabled&7 the vanish for &a[ARG]&7 when they next join"
 
     # What to sender to the target if...
     target:
