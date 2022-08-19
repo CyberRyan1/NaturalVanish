@@ -1,9 +1,10 @@
 package com.github.cyberryan1.events;
 
-import com.github.cyberryan1.utils.ConfigUtils;
-import com.github.cyberryan1.utils.Utilities;
+import com.github.cyberryan1.cybercore.CyberCore;
+import com.github.cyberryan1.cybercore.utils.CoreUtils;
+import com.github.cyberryan1.cybercore.utils.VaultUtils;
 import com.github.cyberryan1.utils.VanishUtils;
-import com.github.cyberryan1.utils.VaultUtils;
+import com.github.cyberryan1.utils.settings.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,25 +19,26 @@ public class DamageByEntity implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntity( EntityDamageByEntityEvent event ) {
+        if ( Settings.VANISH_EVENTS_PVP_CANCEL.bool() == false ) { return; }
         if ( event.getDamager() instanceof Player && event.getEntity() instanceof Player ) {
             Player attacker = ( Player ) event.getDamager();
             Player victim = ( Player ) event.getEntity();
 
-            if ( ConfigUtils.getBool( "vanish.other-events.pvp.cancel" ) ) {
-                if ( VanishUtils.checkVanished( attacker ) &&
-                        ( ConfigUtils.getBool( "vanish.other-events.pvp.bypass" ) == false ||
-                                VaultUtils.hasPerms( attacker, ConfigUtils.getStr( "vanish.other-events.pvp.bypass-perm" ) ) == false ) ) {
-                    event.setCancelled( true );
+            if ( VanishUtils.checkVanished( attacker ) &&
+                    ( Settings.VANISH_EVENTS_PVP_BYPASS.bool() == false
+                            | VaultUtils.hasPerms( attacker, Settings.VANISH_EVENTS_PVP_BYPASS_PERMISSION.string() ) ) ) {
+                event.setCancelled( true );
 
-                    if ( ConfigUtils.getStr( "vanish.other-events.pvp.cancel-msg" ).equals( "" ) == false &&
-                            cooldown.contains( attacker.getName() ) == false ) {
-                        attacker.sendMessage( ConfigUtils.getColoredStr( "vanish.other-events.pvp.cancel-msg", attacker, victim ) );
-                        cooldown.add( attacker.getName() );
+                String cancelMsg = Settings.VANISH_EVENTS_PVP_CANCEL_MSG.coloredString();
+                if ( cancelMsg.isBlank() == false && cooldown.contains( attacker.getName() ) == false ) {
+                    cancelMsg = cancelMsg.replace( "[PLAYER]", attacker.getName() )
+                            .replace( "[ARG]", victim.getName() );
+                    CoreUtils.sendMsg( attacker, cancelMsg );
+                    cooldown.add( attacker.getName() );
 
-                        Bukkit.getScheduler().runTaskLater( Utilities.getPlugin(), () -> {
-                            cooldown.remove( attacker.getName() );
-                        }, 40L );
-                    }
+                    Bukkit.getScheduler().runTaskLater( CyberCore.getPlugin(), () -> {
+                        cooldown.remove( attacker.getName() );
+                    }, 40L );
                 }
             }
         }

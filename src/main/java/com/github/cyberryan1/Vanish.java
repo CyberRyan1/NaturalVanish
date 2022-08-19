@@ -1,7 +1,11 @@
 package com.github.cyberryan1;
 
-import com.github.cyberryan1.utils.*;
-
+import com.github.cyberryan1.cybercore.utils.CoreUtils;
+import com.github.cyberryan1.cybercore.utils.VaultUtils;
+import com.github.cyberryan1.utils.Utils;
+import com.github.cyberryan1.utils.VanishUtils;
+import com.github.cyberryan1.utils.settings.Settings;
+import com.github.cyberryan1.utils.yml.YMLUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -16,8 +20,8 @@ public class Vanish implements CommandExecutor {
 
     @Override
     public boolean onCommand( CommandSender sender, Command command, String label, String[] args ) {
-        if ( VaultUtils.hasPerms( sender, ConfigUtils.getStr( "vanish.permission" ) ) == false ) {
-            sender.sendMessage( ConfigUtils.getColoredStr( "vanish.permission-msg" ) );
+        if ( VaultUtils.hasPerms( sender, Settings.VANISH_PERMISSION.string() ) == false ) {
+            sender.sendMessage( Settings.VANISH_PERMISSION_MSG.coloredString() );
             return true;
         }
 
@@ -30,7 +34,8 @@ public class Vanish implements CommandExecutor {
                 // making sure the player's permission for the highest level hasn't changed, and changing it to the highest
                     // available level if it has
                 if ( VanishUtils.getVanishLevel( player ) > VanishUtils.getMaxVanishLevel( player ) ) {
-                    DataUtils.set( "data." + player.getUniqueId().toString() + ".level", VanishUtils.getMaxVanishLevel( player ) );
+                    YMLUtils.getData().set( "data." + player.getUniqueId().toString() + ".level", VanishUtils.getMaxVanishLevel( player ) );
+                    YMLUtils.getData().save();
                 }
 
                 VanishUtils.toggleVanish( player );
@@ -38,7 +43,7 @@ public class Vanish implements CommandExecutor {
 
             // someone besides a player tried to execute the command, which cannot happen
             else {
-                sender.sendMessage( ConfigUtils.getColoredStr( "vanish.cant-use-msg" ) );
+                sender.sendMessage( Settings.VANISH_CANT_USE_MSG.coloredString() );
             }
 
             return true;
@@ -48,10 +53,10 @@ public class Vanish implements CommandExecutor {
 
         // help sub-command
         else if ( args[0].equalsIgnoreCase( "help" ) ) {
-            String helpMsg[] = { "\n", Utilities.getColored( "&8/&7vanish" ), Utilities.getColored( "&8/&7vanish &ahelp" ), Utilities.getColored( "&8/&7vanish &atoggle (player)"),
-                    Utilities.getColored("&8/&7vanish &asetlevel (level)"), Utilities.getColored("&8/&7vanish &asetlevel (player) (level)"),
-                    Utilities.getColored( "&8/&7vanish &achecklevel [player]"), Utilities.getColored("&8/&7vanish &acheck [player]"),
-                    Utilities.getColored( "&8/&7vanish &alist"), Utilities.getColored("&8/&7vanish &areload"), "\n" };
+            String helpMsg[] = { "\n", CoreUtils.getColored( "&8/&svanish" ), CoreUtils.getColored( "&8/&svanish &phelp" ), CoreUtils.getColored( "&8/&svanish &ptoggle (player)"),
+                    CoreUtils.getColored("&8/&svanish &psetlevel (level)"), CoreUtils.getColored("&8/&svanish &psetlevel (player) (level)"),
+                    CoreUtils.getColored( "&8/&svanish &pchecklevel [player]"), CoreUtils.getColored("&8/&svanish &pcheck [player]"),
+                    CoreUtils.getColored( "&8/&svanish &plist"), CoreUtils.getColored("&8/&svanish &preload"), "\n" };
             for ( String s : helpMsg ) {
                 sender.sendMessage( s );
             }
@@ -63,24 +68,34 @@ public class Vanish implements CommandExecutor {
 
         // toggle (player) sub-command
         else if ( args[0].equalsIgnoreCase( "toggle" ) ) {
-            if ( VaultUtils.hasPerms( sender, ConfigUtils.getStr( "vanish.toggle.permission" ) ) ) {
-                if ( Utilities.isOutOfBounds( args, 1 ) == false ) {
+            if ( VaultUtils.hasPerms( sender, Settings.VANISH_TOGGLE_PERMISSION.string() ) ) {
+                if ( args.length >= 2 ) {
                     Player target = Bukkit.getServer().getPlayer( args[1] );
                     if ( target != null ) {
                         if ( VanishUtils.getMaxVanishLevel( sender ) >= VanishUtils.getMaxVanishLevel( target ) ) {
                             if ( VanishUtils.toggleVanish( target ) ) {
-                                sender.sendMessage( ConfigUtils.getColoredStr( "vanish.toggle.sender.enabled", sender, target ) );
-                                target.sendMessage( ConfigUtils.getColoredStr( "vanish.toggle.target.enabled", sender, target ) );
+                                sender.sendMessage( Settings.VANISH_TOGGLE_SENDER_ENABLED_MSG.coloredString()
+                                        .replace( "[PLAYER]", sender.getName() )
+                                        .replace( "[TARGET]", target.getName() ) );
+                                target.sendMessage( Settings.VANISH_TOGGLE_TARGET_ENABLED_MSG.coloredString()
+                                        .replace( "[PLAYER]", sender.getName() )
+                                        .replace( "[TARGET]", target.getName() ) );
                             }
 
                             else {
-                                sender.sendMessage( ConfigUtils.getColoredStr( "vanish.toggle.sender.disabled", sender, target ) );
-                                target.sendMessage( ConfigUtils.getColoredStr( "vanish.toggle.target.disabled", sender, target ) );
+                                sender.sendMessage( Settings.VANISH_TOGGLE_SENDER_DISABLED_MSG.coloredString()
+                                        .replace( "[PLAYER]", sender.getName() )
+                                        .replace( "[TARGET]", target.getName() ) );
+                                target.sendMessage( Settings.VANISH_TOGGLE_TARGET_DISABLED_MSG.coloredString()
+                                        .replace( "[PLAYER]", sender.getName() )
+                                        .replace( "[TARGET]", target.getName() ) );
                             }
                         }
 
                         else {
-                            sender.sendMessage( ConfigUtils.getColoredStr( "vanish.toggle.level-low-msg", sender, target ) );
+                            sender.sendMessage( Settings.VANISH_TOGGLE_LEVEL_LOW_MSG.coloredString()
+                                    .replace( "[PLAYER]", sender.getName() )
+                                    .replace( "[ARG]", target.getName() ) );
                         }
                     }
 
@@ -91,40 +106,47 @@ public class Vanish implements CommandExecutor {
                         if ( offline.hasPlayedBefore() ) {
                             String uuid = offline.getUniqueId().toString();
 
-                            if ( DataUtils.getBool( "vanish." + uuid + ".enabled" ) ) {
-                                if ( DataUtils.getBool( "data.offline.enabled." + uuid ) ) { DataUtils.set( "data.offline.enabled." + uuid, null ); }
-                                DataUtils.set( "data.offline.disabled." + uuid, true );
-                                DataUtils.set( "vanish." + uuid + ".enabled", null );
-                                DataUtils.save();
+                            if ( YMLUtils.getData().getBool( "vanish." + uuid + ".enabled" ) ) {
+                                if ( YMLUtils.getData().getBool( "data.offline.enabled." + uuid ) ) { YMLUtils.getData().set( "data.offline.enabled." + uuid, null ); }
+                                YMLUtils.getData().set( "data.offline.disabled." + uuid, true );
+                                YMLUtils.getData().set( "vanish." + uuid + ".enabled", null );
+                                YMLUtils.getData().save();
 
-                                sender.sendMessage( ConfigUtils.getColoredStr( "vanish.toggle.sender.off-disabled", sender, offline ) );
+
+                                sender.sendMessage( Settings.VANISH_TOGGLE_SENDER_OFFLINE_DISABLED_MSG.coloredString()
+                                        .replace( "[PLAYER]", sender.getName() )
+                                        .replace( "[ARG]", offline.getName() ) );
                             }
 
 
                             // Target's vanish was disabled, turning it to enabled
                             else {
-                                if ( DataUtils.getBool( "data.offline.disabled." + uuid ) ) { DataUtils.set( "data.offline.disabled." + uuid, null ); }
-                                DataUtils.set( "data.offline.enabled." + uuid, true );
-                                DataUtils.set( "vanish." + uuid + ".enabled", true );
-                                DataUtils.save();
+                                if ( YMLUtils.getData().getBool( "data.offline.disabled." + uuid ) ) { YMLUtils.getData().set( "data.offline.disabled." + uuid, null ); }
+                                YMLUtils.getData().set( "data.offline.enabled." + uuid, true );
+                                YMLUtils.getData().set( "vanish." + uuid + ".enabled", true );
+                                YMLUtils.getData().save();
 
-                                sender.sendMessage( ConfigUtils.getColoredStr( "vanish.toggle.sender.off-enabled", sender, offline ) );
+                                sender.sendMessage( Settings.VANISH_TOGGLE_SENDER_OFFLINE_ENABLED_MSG.coloredString()
+                                        .replace( "[PLAYER]", sender.getName() )
+                                        .replace( "[ARG]", offline.getName() ) );
                             }
                         }
 
                         else {
-                            sender.sendMessage( ConfigUtils.getColoredStr( "vanish.toggle.not-joined-msg", sender, offline ) );
+                            sender.sendMessage( Settings.VANISH_TOGGLE_NOT_JOINED_MSG.coloredString()
+                                    .replace( "[PLAYER]", sender.getName() )
+                                    .replace( "[ARG]", offline.getName() ) );
                         }
                     }
                 }
 
                 else {
-                    sender.sendMessage( Utilities.getColored( "&8/&7vanish &atoggle (player)") );
+                    sender.sendMessage( CoreUtils.getColored( "&8/&svanish &ptoggle (player)") );
                 }
             }
 
             else {
-                sender.sendMessage( ConfigUtils.getColoredStr( "vanish.permission-msg" ) );
+                sender.sendMessage( Settings.VANISH_PERMISSION_MSG.coloredString() );
             }
 
             return true;
@@ -135,12 +157,12 @@ public class Vanish implements CommandExecutor {
         // setlevel (integer) sub-command
         // setlevel (player) (integer) sub-command
         else if ( args[0].equalsIgnoreCase( "setlevel" ) ) {
-            if ( VaultUtils.hasPerms( sender, ConfigUtils.getStr( "vanish.level.permission" ) ) ) {
-                if ( Utilities.isOutOfBounds( args, 1 ) == false ) {
+            if ( VaultUtils.hasPerms( sender, Settings.VANISH_SETLEVEL_PERMISSION.string() ) ) {
+                if ( args.length >= 2 ) {
                     int newLevel;
 
                     // setlevel (integer) sub-command
-                    if ( Utilities.isOutOfBounds( args, 2 ) ) {
+                    if ( args.length == 2 ) {
                         if ( sender instanceof Player ) {
                             try {
                                 newLevel = Integer.parseInt( args[ 1 ] );
@@ -149,37 +171,40 @@ public class Vanish implements CommandExecutor {
                                 }
                             }
                             catch ( NumberFormatException e ) {
-                                sender.sendMessage( ConfigUtils.getColoredStr( "vanish.level.invalid-level-message" ) );
+                                sender.sendMessage( Settings.VANISH_SETLEVEL_INVALID_LEVEL_MSG.coloredString() );
                                 return true;
                             }
 
                             // making sure the vanish level provided is less than or equal to the sender's maximum vanish level
                             if ( newLevel <= VanishUtils.getMaxVanishLevel( sender ) ) {
                                 String playerUUID = ( ( Player ) sender ).getUniqueId().toString();
-                                DataUtils.set( "data." + playerUUID + ".level", newLevel );
-                                sender.sendMessage( Utilities.getColored( "&7New vanish level: &a" + DataUtils.getStr( "data." + playerUUID + ".level" ) ) );
+                                YMLUtils.getData().set( "data." + playerUUID + ".level", newLevel );
+                                sender.sendMessage( CoreUtils.getColored( "&sNew vanish level: &p" + newLevel ) );
+                                YMLUtils.saveData();
                             }
 
                             else {
-                                sender.sendMessage( ConfigUtils.getColoredStr( "vanish.level.high-msg", sender, newLevel + "" ) );
+                                sender.sendMessage( Settings.VANISH_SETLEVEL_HIGH_MSG.coloredString()
+                                        .replace( "[PLAYER]", sender.getName() )
+                                        .replace( "[ARG]", newLevel + "" ) );
                             }
                         }
 
                         else {
-                            sender.sendMessage( ConfigUtils.getColoredStr( "vanish.cant-use-msg" ) );
+                            sender.sendMessage( Settings.VANISH_CANT_USE_MSG.coloredString() );
                         }
                     }
 
 
                     // setlevel (player) (integer) sub-command
-                    else if ( Utilities.isOutOfBounds( args, 2 ) == false ) {
-                        if ( VaultUtils.hasPerms( sender, ConfigUtils.getStr( "vanish.level-others.permission" ) ) ) {
+                    else if ( args.length >= 3 ) {
+                        if ( VaultUtils.hasPerms( sender, Settings.VANISH_LEVEL_OTHERS_PERMISSION.string() ) ) {
                             try {
                                 newLevel = Integer.parseInt( args[2] );
                                 if ( newLevel < 1 || newLevel > 5 ) { throw new NumberFormatException(); }
                             }
                             catch ( NumberFormatException e ) {
-                                sender.sendMessage( ConfigUtils.getColoredStr( "vanish.level.invalid-level-message" ) );
+                                sender.sendMessage( Settings.VANISH_SETLEVEL_INVALID_LEVEL_MSG.coloredString() );
                                 return true;
                             }
 
@@ -188,44 +213,51 @@ public class Vanish implements CommandExecutor {
                                 OfflinePlayer target = Bukkit.getServer().getOfflinePlayer( args[1] );
                                 if ( target.hasPlayedBefore() ) {
                                     String targetUUID = target.getUniqueId().toString();
-                                    DataUtils.set( "data." + targetUUID + ".level", newLevel );
+                                    YMLUtils.getData().set( "data." + targetUUID + ".level", newLevel );
 
-                                    sender.sendMessage( Utilities.getColored( "&a" + target.getName() + "&7's vanish level has been set to &a" + DataUtils.getStr( "data." + targetUUID + ".level" ) ) );
+                                    sender.sendMessage( CoreUtils.getColored( "&p" + target.getName() + "&s's vanish level has been set to &p" + newLevel ) );
 
                                     if ( target.isOnline() ) {
                                         Player targetOnline = Bukkit.getServer().getPlayer( args[1] );
-                                        targetOnline.sendMessage( Utilities.getColored( "&7Your vanish level has been set to &a" + DataUtils.getStr( "data." + targetUUID + ".level" ) ) );
+                                        targetOnline.sendMessage( CoreUtils.getColored( "&sYour vanish level has been set to &p" + newLevel ) );
                                     }
 
                                     else {
-                                        DataUtils.set( "data.offline.level-changed." + targetUUID, true );
+                                        YMLUtils.getData().set( "data.offline.level-changed." + targetUUID, true );
                                     }
+
+                                    YMLUtils.saveData();
                                 }
 
                                 else {
-                                    sender.sendMessage( ConfigUtils.getColoredStr( "vanish.level-others.not-joined-msg", sender, target ) );
+                                    sender.sendMessage( Settings.VANISH_LEVEL_OTHERS_NOT_JOINED_MSG.coloredString()
+                                            .replace( "[PLAYER]", sender.getName() )
+                                            .replace( "[ARG]", target.getName() ) );
                                 }
                             }
 
                             else {
-                                sender.sendMessage( ConfigUtils.getColoredStr( "vanish.level.high-msg", sender, newLevel + "" ) );
+                                sender.sendMessage( Settings.VANISH_LEVEL_OTHERS_NOT_JOINED_MSG.coloredString()
+                                        .replace( "[PLAYER]", sender.getName() )
+                                        .replace( "[ARG]", newLevel + "" ) );
                             }
                         }
 
                         else {
-                            sender.sendMessage( ConfigUtils.getColoredStr( "vanish.permission-msg", sender ) );
+                            sender.sendMessage( Settings.VANISH_PERMISSION_MSG.coloredString()
+                                    .replace( "[PLAYER]", sender.getName() ) );
                         }
                     }
                 }
 
                 else {
-                    sender.sendMessage( Utilities.getColored( "&8/&7vanish &asetlevel (level)" ) );
-                    sender.sendMessage( Utilities.getColored( "&8/&7vanish &asetlevel (player) (level)" ) );
+                    sender.sendMessage( CoreUtils.getColored( "&8/&svanish &psetlevel (level)" ) );
+                    sender.sendMessage( CoreUtils.getColored( "&8/&svanish &psetlevel (player) (level)" ) );
                 }
             }
 
             else {
-                sender.sendMessage( ConfigUtils.getColoredStr( "vanish.permission-msg" ) );
+                sender.sendMessage( Settings.VANISH_PERMISSION_MSG.coloredString() );
             }
 
             return true;
@@ -235,44 +267,44 @@ public class Vanish implements CommandExecutor {
 
         // checklevel [player] sub-command
         else if ( args[0].equalsIgnoreCase( "checklevel" ) ) {
-            if ( VaultUtils.hasPerms( sender, ConfigUtils.getStr( "vanish.checklevel.permission") ) ) {
+            if ( VaultUtils.hasPerms( sender, Settings.VANISH_CHECKLEVEL_PERMISSION.string() ) ) {
                 // checklevel sub-command
-                if ( Utilities.isOutOfBounds( args, 1 ) ) {
+                if ( args.length >= 2 ) {
                     if ( sender instanceof Player == false ) {
-                        sender.sendMessage( ConfigUtils.getColoredStr( "vanish.cant-use-msg" ) );
+                        sender.sendMessage( Settings.VANISH_CANT_USE_MSG.coloredString() );
                     }
 
                     else {
-                        sender.sendMessage( Utilities.getColored( "&a" + sender.getName() + "&7's current level is &a" + VanishUtils.getVanishLevel( ( Player ) sender ) ) );
+                        sender.sendMessage( CoreUtils.getColored( "&p" + sender.getName() + "&s's current level is &p" + VanishUtils.getVanishLevel( ( Player ) sender ) ) );
                     }
                 }
 
 
                 // checklevel [player] sub-command
-                else if ( VaultUtils.hasPerms( sender, ConfigUtils.getStr( "vanish.checklevel-other.permission" ) ) ) {
+                else if ( VaultUtils.hasPerms( sender, Settings.VANISH_CHECKLEVEL_OTHERS_PERMISSION.string() ) ) {
                     OfflinePlayer target = Bukkit.getServer().getOfflinePlayer( args[1] );
                     if ( target.hasPlayedBefore() ) {
                         if ( VanishUtils.getMaxVanishLevel( target ) == 0 ) {
-                            sender.sendMessage( Utilities.getColored( "&a" + target.getName() + "&7 doesn't have a vanish level set!" ) );
+                            sender.sendMessage( CoreUtils.getColored( "&p" + target.getName() + "&s doesn't have a vanish level set!" ) );
                         }
 
                         else {
-                            sender.sendMessage( Utilities.getColored( "&a" + target.getName() + "&7's vanish level is &a" + VanishUtils.getVanishLevel( target ) ) );
+                            sender.sendMessage( CoreUtils.getColored( "&p" + target.getName() + "&s's vanish level is &p" + VanishUtils.getVanishLevel( target ) ) );
                         }
                     }
 
                     else {
-                        sender.sendMessage( ConfigUtils.getColoredStr( "vanish.checklevel.not-joined-msg" ) );
+                        sender.sendMessage( Settings.VANISH_CHECKLEVEL_OTHERS_NOT_JOINED_MSG.coloredString() );
                     }
                 }
 
                 else {
-                    sender.sendMessage( ConfigUtils.getColoredStr( "vanish.permission-msg" ) );
+                    sender.sendMessage( Settings.VANISH_PERMISSION_MSG.coloredString() );
                 }
             }
 
             else {
-                sender.sendMessage( ConfigUtils.getColoredStr( "vanish.permission-msg" ) );
+                sender.sendMessage( Settings.VANISH_PERMISSION_MSG.coloredString() );
             }
 
             return true;
@@ -282,11 +314,11 @@ public class Vanish implements CommandExecutor {
 
         // check [player] sub-command
         else if ( args[0].equalsIgnoreCase( "check" ) ) {
-            if ( VaultUtils.hasPerms( sender, ConfigUtils.getStr( "vanish.check" ) ) ) {
+            if ( VaultUtils.hasPerms( sender, Settings.VANISH_CHECK_PERMISSION.string() ) ) {
                 // check sub-command
-                if ( Utilities.isOutOfBounds( args, 1 ) ) {
+                if ( args.length >= 2 ) {
                     if ( sender instanceof Player == false ) {
-                        sender.sendMessage( ConfigUtils.getColoredStr( "vanish.cant-use-msg" ) );
+                        sender.sendMessage( Settings.VANISH_CANT_USE_MSG.coloredString() );
 
                         return true;
                     }
@@ -294,39 +326,39 @@ public class Vanish implements CommandExecutor {
                     String UUID = ( ( Player ) sender ).getUniqueId().toString();
 
                     // player is vanished
-                    if ( DataUtils.getConfig().contains( "vanish." + UUID + ".enabled" ) ) {
-                        sender.sendMessage( Utilities.getColored( "&7Your vanish is currently &aenabled" ) );
+                    if ( YMLUtils.getData().getConfig().contains( "vanish." + UUID + ".enabled" ) ) {
+                        sender.sendMessage( CoreUtils.getColored( "&sYour vanish is currently &penabled" ) );
                     }
 
                     // player is not vanished
                     else {
-                        sender.sendMessage( Utilities.getColored( "&7Your vanish is currently &cdisabled" ) );
+                        sender.sendMessage( CoreUtils.getColored( "&sYour vanish is currently &cdisabled" ) );
                     }
                 }
 
 
                 // check [player] sub-command
-                else if ( VaultUtils.hasPerms( sender, ConfigUtils.getStr( "vanish.check-other.permission" ) ) ) {
+                else if ( VaultUtils.hasPerms( sender, Settings.VANISH_CHECK_OTHERS_PERMISSION.string() ) ) {
                     OfflinePlayer target = Bukkit.getServer().getOfflinePlayer( args[1] );
 
                     // target is vanished
-                    if ( DataUtils.getConfig().contains( "vanish." + target.getUniqueId().toString() + ".enabled" ) ) {
-                        sender.sendMessage( Utilities.getColored( "&a" + target.getName() + "&7's vanish is currently &aenabled" ) );
+                    if ( YMLUtils.getData().getConfig().contains( "vanish." + target.getUniqueId().toString() + ".enabled" ) ) {
+                        sender.sendMessage( CoreUtils.getColored( "&p" + target.getName() + "&s's vanish is currently &penabled" ) );
                     }
 
                     // target is not vanished
                     else {
-                        sender.sendMessage( Utilities.getColored( "&a" + target.getName() + "&7's vanish is currently &cdisabled" ) );
+                        sender.sendMessage( CoreUtils.getColored( "&p" + target.getName() + "&s's vanish is currently &cdisabled" ) );
                     }
                 }
 
                 else {
-                    sender.sendMessage( ConfigUtils.getColoredStr( "vanish.permission-msg" ) );
+                    sender.sendMessage( Settings.VANISH_PERMISSION_MSG.coloredString() );
                 }
             }
 
             else {
-                sender.sendMessage( ConfigUtils.getColoredStr( "vanish.permission-msg" ) );
+                sender.sendMessage( Settings.VANISH_PERMISSION_MSG.coloredString() );
             }
 
             return true;
@@ -336,7 +368,7 @@ public class Vanish implements CommandExecutor {
 
         // list sub-command
         else if ( args[0].equalsIgnoreCase( "list" ) ) {
-            if ( VaultUtils.hasPerms( sender, ConfigUtils.getStr( "vanish.list.permission" ) ) ) {
+            if ( VaultUtils.hasPerms( sender, Settings.VANISH_LIST_PERMISSION.string() ) ) {
 
                 // get an ArrayList of all the vanished players
                 ArrayList<String> vanishedPlayers = new ArrayList<>();
@@ -347,9 +379,9 @@ public class Vanish implements CommandExecutor {
                     Player p = Bukkit.getServer().getPlayer( u );
                     if ( p != null ) {
                         // ensuring that either the sender has the override permission or the senders max level is higher than the looped players max level
-                        int targetLevel = DataUtils.getInt( "vanish." + uuid + ".level" );
-                        if ( VaultUtils.hasPerms( sender, ConfigUtils.getStr( "vanish.list.permission-all" ) ) || VanishUtils.getMaxVanishLevel( sender ) >= targetLevel ) {
-                            vanishedPlayers.add( "&a" + p.getName() + "&7" );
+                        int targetLevel = YMLUtils.getData().getInt( "vanish." + uuid + ".level" );
+                        if ( VaultUtils.hasPerms( sender, Settings.VANISH_LIST_PERMISSION_ALL.string() ) || VanishUtils.getMaxVanishLevel( sender ) >= targetLevel ) {
+                            vanishedPlayers.add( "&p" + p.getName() + "&s" );
                         }
                     }
 
@@ -358,26 +390,26 @@ public class Vanish implements CommandExecutor {
                         OfflinePlayer offline = Bukkit.getOfflinePlayer( u );
                         if ( offline != null ) {
                             // ensuring that either the sender has the override permission or the senders max level is higher than the looped players max level
-                            int targetLevel = DataUtils.getInt( "vanish." + uuid + ".level" );
-                            if ( VaultUtils.hasPerms( sender, ConfigUtils.getStr( "vanish.list.permission-all" ) ) || VanishUtils.getMaxVanishLevel( sender ) >= targetLevel ) {
-                                vanishedPlayers.add( "&7" + offline.getName() );
+                            int targetLevel = YMLUtils.getData().getInt( "vanish." + uuid + ".level" );
+                            if ( VaultUtils.hasPerms( sender, Settings.VANISH_LIST_PERMISSION_ALL.string() ) || VanishUtils.getMaxVanishLevel( sender ) >= targetLevel ) {
+                                vanishedPlayers.add( "&s" + offline.getName() );
                             }
                         }
 
                         // issue with finding the player from the UUID provided
                         // most likely means that the data file was editted by an idiot
                         else {
-                            Utilities.logError( "Could not find an offlineplayer from UUID " + uuid );
+                            CoreUtils.logError( "Could not find an offlineplayer from UUID " + uuid );
                         }
                     }
                 }
 
-                sender.sendMessage( Utilities.getColored( "&aGreen&7 = online, Gray = offline" ) );
-                sender.sendMessage( Utilities.getColored( "&7List of all vanished players &8- &7\n" + Utilities.getStringFromList( vanishedPlayers ) ) );
+                sender.sendMessage( CoreUtils.getColored( "&pGreen&s = online, Gray = offline" ) );
+                sender.sendMessage( CoreUtils.getColored( "&sList of all vanished players &8- &s\n" + Utils.getStringFromList( vanishedPlayers ) ) );
             }
 
             else {
-                sender.sendMessage( ConfigUtils.getColoredStr( "vanish.permission-msg" ) );
+                sender.sendMessage( Settings.VANISH_PERMISSION_MSG.coloredString() );
             }
 
             return true;
@@ -387,24 +419,22 @@ public class Vanish implements CommandExecutor {
 
         // reload sub-command
         else if ( args[0].equalsIgnoreCase( "reload" ) ) {
-            if ( VaultUtils.hasPerms( sender, ConfigUtils.getStr( "vanish.reload.permission" ) ) == false ) {
-                sender.sendMessage( ConfigUtils.getColoredStr( "vanish.permission-msg" ) );
+            if ( VaultUtils.hasPerms( sender, Settings.VANISH_RELOAD_PERMISSION.string() ) == false ) {
+                sender.sendMessage( Settings.VANISH_PERMISSION_MSG.coloredString() );
             }
 
             else {
-                sender.sendMessage( Utilities.getColored( "&7Attempting to reload &aNaturalVanish&7..." ) );
-                Utilities.logInfo( Utilities.getColored( "Attempting to reload NaturalVanish..." ) );
-
-                if ( ConfigUtils.getConfigManager().getConfigFile().exists() == false || ConfigUtils.getConfigManager().getConfigFile() == null ) {
-                    ConfigUtils.getConfigManager().saveDefaultConfig();
+                sender.sendMessage( CoreUtils.getColored( "&sAttempting to reload &pNaturalVanish&s..." ) );
+                CoreUtils.logInfo( CoreUtils.getColored( "Attempting to reload NaturalVanish..." ) );
+                
+                YMLUtils.getConfig().getYMLManager().initialize();
+                YMLUtils.getData().getYMLManager().initialize();
+                for ( Settings setting : Settings.values() ) {
+                    setting.reload();
                 }
 
-
-                ConfigUtils.getConfigManager().reloadConfig();
-                DataUtils.getDataManager().reloadConfig();
-
-                sender.sendMessage( Utilities.getColored( "&7Successfully reloaded &aNaturalVanish" ) );
-                Utilities.logInfo( Utilities.getColored( "Successfully reloaded NaturalVanish and its files" ) );
+                sender.sendMessage( CoreUtils.getColored( "&sSuccessfully reloaded &pNaturalVanish" ) );
+                CoreUtils.logInfo( CoreUtils.getColored( "Successfully reloaded NaturalVanish and its files" ) );
             }
 
             return true;
@@ -412,10 +442,10 @@ public class Vanish implements CommandExecutor {
 
 
 
-        String helpMsg[] = { "\n", Utilities.getColored( "&8/&7vanish" ), Utilities.getColored( "&8/&7vanish &ahelp" ), Utilities.getColored( "&8/&7vanish &atoggle (player)"),
-                Utilities.getColored("&8/&7vanish &asetlevel (level)"), Utilities.getColored("&8/&7vanish &asetlevel (player) (level)"),
-                Utilities.getColored( "&8/&7vanish &achecklevel [player]"), Utilities.getColored("&8/&7vanish &acheck [player]"),
-                Utilities.getColored( "&8/&7vanish &alist"), Utilities.getColored("&8/&7vanish &areload"), "\n" };
+        String helpMsg[] = { "\n", CoreUtils.getColored( "&8/&svanish" ), CoreUtils.getColored( "&8/&svanish &phelp" ), CoreUtils.getColored( "&8/&svanish &ptoggle (player)"),
+                CoreUtils.getColored("&8/&svanish &psetlevel (level)"), CoreUtils.getColored("&8/&svanish &psetlevel (player) (level)"),
+                CoreUtils.getColored( "&8/&svanish &pchecklevel [player]"), CoreUtils.getColored("&8/&svanish &pcheck [player]"),
+                CoreUtils.getColored( "&8/&svanish &plist"), CoreUtils.getColored("&8/&svanish &preload"), "\n" };
         for ( String s : helpMsg ) {
             sender.sendMessage( s );
         }

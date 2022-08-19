@@ -12,6 +12,8 @@ public enum Settings {
     // General Settings
     VANISH_PERMISSION( "vanish.permission", "string" ),
     VANISH_PERMISSION_MSG( "vanish.permission-msg", "string" ),
+    PRIMARY_COLOR( "vanish.primary-color", "string" ),
+    SECONDARY_COLOR( "vanish.secondary-color", "string" ),
     VANISH_OP_OVERRIDE( "vanish.op-override", "boolean" ),
     VANISH_CANT_USE_MSG( "vanish.cant-use-msg", "string" ),
 

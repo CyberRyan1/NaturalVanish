@@ -1,13 +1,13 @@
 package com.github.cyberryan1.events;
 
-import com.github.cyberryan1.utils.ConfigUtils;
-import com.github.cyberryan1.utils.Utilities;
+import com.github.cyberryan1.cybercore.CyberCore;
+import com.github.cyberryan1.cybercore.utils.CoreUtils;
+import com.github.cyberryan1.cybercore.utils.VaultUtils;
 import com.github.cyberryan1.utils.VanishUtils;
-import com.github.cyberryan1.utils.VaultUtils;
+import com.github.cyberryan1.utils.settings.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import static org.bukkit.Material.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,6 +16,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import static org.bukkit.Material.*;
 
 public class Interact implements Listener {
 
@@ -35,73 +37,68 @@ public class Interact implements Listener {
 
     @EventHandler
     public void onInteract( PlayerInteractEvent event ) {
-        if ( VanishUtils.checkVanished( event.getPlayer() ) ) {
-            if ( event.getAction() == Action.RIGHT_CLICK_BLOCK ) {
-                Player player = event.getPlayer();
+        if ( VanishUtils.checkVanished( event.getPlayer() ) == false ) { return; }
 
-                if ( player.isSneaking() == false || ( player.getInventory().getItemInMainHand() != null && player.getInventory().getItemInHand().getType().isBlock() == false
-                        && player.getInventory().getItemInOffHand() != null && player.getInventory().getItemInOffHand().getType().isBlock() == false ) ) {
-                    // SilentChest opening
-                    if ( chestBlocks.contains( event.getClickedBlock().getType() ) ) {
+        if ( event.getAction() == Action.RIGHT_CLICK_BLOCK ) {
+            Player player = event.getPlayer();
 
-                        if ( ConfigUtils.getBool( "vanish.other-events.chest-open.silent" ) ) {
+            if ( player.isSneaking() == false || ( player.getInventory().getItemInMainHand() != null && player.getInventory().getItemInHand().getType().isBlock() == false
+                    && player.getInventory().getItemInOffHand() != null && player.getInventory().getItemInOffHand().getType().isBlock() == false ) ) {
+                // SilentChest opening
+                if ( Settings.VANISH_EVENTS_CHEST_SILENT.bool() && chestBlocks.contains( event.getClickedBlock().getType() ) ) {
 
-                            if ( event.getClickedBlock().getType() == Material.ENDER_CHEST ) {
-                                event.setCancelled( true );
-                                player.openInventory( player.getEnderChest() );
-                            }
-
-                            else {
-                                GameMode prev = player.getGameMode();
-                                player.setGameMode( GameMode.SPECTATOR );
-                                Bukkit.getScheduler().runTaskLater( Utilities.getPlugin(), () -> {
-                                    player.setGameMode( prev );
-                                }, 2L );
-                            }
-
-                            if ( ConfigUtils.getStr( "vanish.other-events.chest-open.silent-msg").equals( "" ) == false ) {
-                                player.sendMessage( ConfigUtils.getColoredStr( "vanish.other-events.chest-open.silent-msg", player ) );
-                            }
-                        }
+                    if ( event.getClickedBlock().getType() == Material.ENDER_CHEST ) {
+                        event.setCancelled( true );
+                        player.openInventory( player.getEnderChest() );
                     }
 
-                    // Using a button, lever, door, or fencegate
-                    else if ( redstoneBlocks.contains( event.getClickedBlock().getType() ) ) {
+                    else {
+                        GameMode prev = player.getGameMode();
+                        player.setGameMode( GameMode.SPECTATOR );
+                        Bukkit.getScheduler().runTaskLater( CyberCore.getPlugin(), () -> {
+                            player.setGameMode( prev );
+                        }, 2L );
+                    }
 
-                        if ( ConfigUtils.getBool( "vanish.other-events.interact.cancel" ) ) {
-                            if ( ConfigUtils.getBool( "vanish.other-events.interact.bypass" ) == false
-                                    || VaultUtils.hasPerms( player, ConfigUtils.getStr( "vanish.other-events.interact.bypass-perm" ) ) == false ) {
-                                event.setCancelled( true );
+                    String silentMsg = Settings.VANISH_EVENTS_CHEST_SILENT_MSG.coloredString();
+                    if ( silentMsg.isBlank() == false ) {
+                        CoreUtils.sendMsg( player, silentMsg.replace( "[PLAYER]", player.getName() ) );
+                    }
+                }
 
-                                if ( ConfigUtils.getStr( "vanish.other-events.interact.cancel-msg" ).equals( "" ) == false ) {
-                                    player.sendMessage( ConfigUtils.getColoredStr( "vanish.other-events.interact.cancel-msg", player ) );
-                                }
-                            }
+                // Using a button, lever, door, or fencegate
+                else if ( Settings.VANISH_EVENTS_INTERACT_CANCEL.bool() && redstoneBlocks.contains( event.getClickedBlock().getType() ) ) {
+
+                    if ( Settings.VANISH_EVENTS_INTERACT_BYPASS.bool() == false
+                            || VaultUtils.hasPerms( player, Settings.VANISH_EVENTS_INTERACT_BYPASS_PERMISSION.string() ) == false ) {
+                        event.setCancelled( true );
+
+                        String cancelMsg = Settings.VANISH_EVENTS_INTERACT_CANCEL_MSG.coloredString();
+                        if ( cancelMsg.isBlank() == false ) {
+                            CoreUtils.sendMsg( player, cancelMsg.replace( "[PLAYER]", player.getName() ) );
                         }
                     }
                 }
             }
+        }
 
-            else if ( event.getAction() == Action.PHYSICAL ) {
-                Player player = event.getPlayer();
+        else if ( Settings.VANISH_EVENTS_INTERACT_CANCEL.bool() && event.getAction() == Action.PHYSICAL ) {
+            if ( pressureBlocks.contains( event.getClickedBlock().getType() ) == false ) { return; }
+            Player player = event.getPlayer();
 
-                if ( pressureBlocks.contains( event.getClickedBlock().getType() ) ) {
-                    if ( ConfigUtils.getBool( "vanish.other-events.interact.cancel" ) ) {
-                        if ( ConfigUtils.getBool( "vanish.other-events.interact.bypass" ) == false ||
-                                VaultUtils.hasPerms( player, ConfigUtils.getStr( "vanish.other-events.interact.bypass-perm" ) ) == false ) {
-                            event.setCancelled( true );
+            if ( Settings.VANISH_EVENTS_INTERACT_BYPASS.bool() == false
+                    || VaultUtils.hasPerms( player, Settings.VANISH_EVENTS_INTERACT_BYPASS_PERMISSION.string() ) == false ) {
+                event.setCancelled( true );
 
-                            if ( ConfigUtils.getStr( "vanish.other-events.interact.cancel-msg" ).equals( "" ) == false &&
-                                    physicalCooldown.contains( event.getPlayer().getName() ) == false ) {
-                                player.sendMessage( ConfigUtils.getColoredStr( "vanish.other-events.interact.cancel-msg", player ) );
+                String cancelMsg = Settings.VANISH_EVENTS_INTERACT_CANCEL_MSG.coloredString();
+                if ( cancelMsg.isBlank() == false  &&
+                        physicalCooldown.contains( event.getPlayer().getName() ) == false ) {
+                    CoreUtils.sendMsg( player, cancelMsg.replace( "[PLAYER]", player.getName() ) );
 
-                                physicalCooldown.add( player.getName() );
-                                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask( Utilities.getPlugin(), new Runnable() {
-                                    public void run() { physicalCooldown.remove( player.getName() ); }
-                                }, 60L);
-                            }
-                        }
-                    }
+                    physicalCooldown.add( player.getName() );
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask( CyberCore.getPlugin(), new Runnable() {
+                        public void run() { physicalCooldown.remove( player.getName() ); }
+                    }, 60L );
                 }
             }
         }

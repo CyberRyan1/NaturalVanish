@@ -1,5 +1,10 @@
 package com.github.cyberryan1.utils;
 
+import com.github.cyberryan1.cybercore.CyberCore;
+import com.github.cyberryan1.cybercore.utils.CoreItemUtils;
+import com.github.cyberryan1.cybercore.utils.VaultUtils;
+import com.github.cyberryan1.utils.settings.Settings;
+import com.github.cyberryan1.utils.yml.YMLUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -31,47 +36,54 @@ public class VanishUtils {
 
 
     public static void enableVanish( Player player ) {
-        String usePerm = ConfigUtils.getStr( "vanish.permission" );
+        String usePerm = Settings.VANISH_PERMISSION.string();
         int playerLevel = getVanishLevel( player );
         String playerUUID = player.getUniqueId().toString();
 
-        DataUtils.set( "vanish." + playerUUID + ".enabled", true );
-        DataUtils.set( "vanish." + playerUUID + ".level", playerLevel );
+        YMLUtils.getData().set( "vanish." + playerUUID + ".enabled", true );
+        YMLUtils.getData().set( "vanish." + playerUUID + ".level", playerLevel );
 
-        String vanishedMsg = ConfigUtils.getColoredStr( "vanish.level." + playerLevel + ".enable-msg", player );
+        String vanishedMsg = switch ( playerLevel ) {
+            case 2 -> Settings.VANISH_LEVEL_TWO_ENABLE_MSG.coloredString();
+            case 3 -> Settings.VANISH_LEVEL_THREE_ENABLE_MSG.coloredString();
+            case 4 -> Settings.VANISH_LEVEL_FOUR_ENABLE_MSG.coloredString();
+            case 5 -> Settings.VANISH_LEVEL_FIVE_ENABLE_MSG.coloredString();
+            default -> Settings.VANISH_LEVEL_ONE_ENABLE_MSG.coloredString();
+        };
+        vanishedMsg = vanishedMsg.replace( "[PLAYER]", player.getName() );
 
         for ( Player p : Bukkit.getOnlinePlayers() ) {
             if ( VaultUtils.hasPerms( p, usePerm ) == false ) {
-                p.hidePlayer( Utilities.getPlugin(), player );
+                p.hidePlayer( CyberCore.getPlugin(), player );
             }
             else if ( playerLevel <= getMaxVanishLevel( p ) ) {
                 p.sendMessage( vanishedMsg );
             }
             else {
-                p.hidePlayer( Utilities.getPlugin(), player );
+                p.hidePlayer( CyberCore.getPlugin(), player );
             }
         }
 
         // config: enable flight
-        if ( ConfigUtils.getBool( "vanish.use.flight.enable" ) ) {
+        if ( Settings.VANISH_FLIGHT_ENABLE.bool() ) {
             // config: reset flight
-            if ( ConfigUtils.getBool( "vanish.use.flight.reset" ) ) {
-                DataUtils.set( "vanish." + playerUUID + ".previous.flight-state", player.getAllowFlight() );
+            if ( Settings.VANISH_RESET_FLIGHT.bool() ) {
+                YMLUtils.getData().set( "vanish." + playerUUID + ".previous.flight-state", player.getAllowFlight() );
             }
 
             player.setAllowFlight( true );
 
             // config: flight speed
-            if ( ConfigUtils.getFloat( "vanish.use.flight.speed" ) > 1 ) {
-                DataUtils.set( "vanish." + playerUUID + ".previous.flight-speed", player.getFlySpeed() );
-                player.setFlySpeed( 0.1f * ConfigUtils.getFloat( "vanish.use.flight.speed" ) );
+            if ( Settings.VANISH_FLIGHT_SPEED.getFloat() > 1 ) {
+                YMLUtils.getData().set( "vanish." + playerUUID + ".previous.flight-speed", player.getFlySpeed() );
+                player.setFlySpeed( 0.1f * Settings.VANISH_FLIGHT_SPEED.getFloat() );
             }
         }
 
         // config: night vision
-        if ( ConfigUtils.getBool( "vanish.use.night-vision" ) ) {
+        if ( Settings.VANISH_NIGHT_VISION.bool() ) {
             if ( player.getPotionEffect( PotionEffectType.NIGHT_VISION ) != null ) {
-                DataUtils.set( "vanish." + playerUUID + ".previous.night-vision", player.getPotionEffect( PotionEffectType.NIGHT_VISION ) );
+                YMLUtils.getData().set( "vanish." + playerUUID + ".previous.night-vision", player.getPotionEffect( PotionEffectType.NIGHT_VISION ) );
             }
 
             PotionEffect nightvis = new PotionEffect( PotionEffectType.NIGHT_VISION, 200000, 2, true, false );
@@ -79,57 +91,65 @@ public class VanishUtils {
         }
 
         // config: see self
-        if ( ConfigUtils.getBool( "vanish.use.see-self" ) == false ) {
+        if ( Settings.VANISH_SEE_SELF.bool() == false ) {
             if ( player.getPotionEffect( PotionEffectType.INVISIBILITY ) != null ) {
-                DataUtils.set( "vanish." + playerUUID + ".previous.invisibility", player.getPotionEffect( PotionEffectType.INVISIBILITY ) );
+                YMLUtils.getData().set( "vanish." + playerUUID + ".previous.invisibility", player.getPotionEffect( PotionEffectType.INVISIBILITY ) );
             }
 
             PotionEffect invis = new PotionEffect( PotionEffectType.INVISIBILITY, 200000, 2, true, false );
             player.addPotionEffect( invis );
 
             // config: skull-helmet
-            if ( ConfigUtils.getBool( "vanish.use.skull-helmet" ) ) {
-                DataUtils.set( "vanish." + playerUUID + ".previous.helmet", player.getInventory().getHelmet() );
+            if ( Settings.VANISH_SKULL_HELMET.bool() ) {
+                YMLUtils.getData().set( "vanish." + playerUUID + ".previous.helmet", player.getInventory().getHelmet() );
 
                 ItemStack armor[] = new ItemStack[4];
                 armor[0] = player.getInventory().getBoots();
                 armor[1] = player.getInventory().getLeggings();
                 armor[2] = player.getInventory().getChestplate();
-                armor[3] = Utilities.getPlayerHead( player );
+                armor[3] = CoreItemUtils.getPlayerSkull( player );
 
                 player.getInventory().setArmorContents( armor );
             }
         }
 
         // config: walk speed
-        if ( ConfigUtils.getInt( "vanish.use.walk-speed" ) > 1 ) {
-            DataUtils.set( "vanish." + playerUUID + ".previous.walk-speed", player.getWalkSpeed() );
-            player.setWalkSpeed( 0.1f * ConfigUtils.getInt( "vanish.use.walk-speed" ) );
+        if ( Settings.VANISH_WALK_SPEED.getFloat() > 1 ) {
+            YMLUtils.getData().set( "vanish." + playerUUID + ".previous.walk-speed", player.getWalkSpeed() );
+            player.setWalkSpeed( 0.1f * Settings.VANISH_WALK_SPEED.getFloat() );
         }
 
         // config: bossbar
-        if ( ConfigUtils.getBool( "vanish.use.bossbar.enable" ) ) {
+        if ( Settings.VANISH_BOSSBAR_ENABLE.bool() ) {
             BossbarUtils.addBossbar( player );
         }
 
         // config (other-events): hunger
-        if ( ConfigUtils.getBool( "vanish.other-events.hunger.cancel" ) ) {
-            DataUtils.set( "vanish." + playerUUID + ".previous.hunger", player.getFoodLevel() );
+        if ( Settings.VANISH_EVENTS_HUNGER_CANCEL.bool() ) {
+            YMLUtils.getData().set( "vanish." + playerUUID + ".previous.hunger", player.getFoodLevel() );
             player.setFoodLevel( 20 );
         }
 
-        DataUtils.save();
+        YMLUtils.getData().save();
     }
 
 
     public static void disableVanish( Player player ) {
-        String usePerm = ConfigUtils.getStr( "vanish.permission" );
+        String usePerm = Settings.VANISH_PERMISSION.string();
         int playerLevel = getVanishLevel( player );
         String playerUUID = player.getUniqueId().toString();
-        String unvanishedMsg = ConfigUtils.getColoredStr( "vanish.level." + playerLevel + ".disable-msg", player );
+
+        String unvanishedMsg = switch ( playerLevel ) {
+            case 2 -> Settings.VANISH_LEVEL_TWO_DISABLE_MSG.coloredString();
+            case 3 -> Settings.VANISH_LEVEL_THREE_DISABLE_MSG.coloredString();
+            case 4 -> Settings.VANISH_LEVEL_FOUR_DISABLE_MSG.coloredString();
+            case 5 -> Settings.VANISH_LEVEL_FIVE_DISABLE_MSG.coloredString();
+            default -> Settings.VANISH_LEVEL_ONE_DISABLE_MSG.coloredString();
+        };
+        unvanishedMsg = unvanishedMsg.replace( "[PLAYER]", player.getName() );
 
         for ( Player p : Bukkit.getOnlinePlayers() ) {
-            p.showPlayer( Utilities.getPlugin(), player );
+            p.showPlayer( CyberCore.getPlugin(), player );
 
             if ( playerLevel <= getMaxVanishLevel( p ) ) {
                 p.sendMessage( unvanishedMsg );
@@ -137,69 +157,69 @@ public class VanishUtils {
         }
 
         // config: enable flight
-        if ( ConfigUtils.getBool( "vanish.use.flight.enable" ) ) {
+        if ( Settings.VANISH_FLIGHT_ENABLE.bool() ) {
             // config: reset flight
-            if ( ConfigUtils.getBool( "vanish.use.flight.reset" ) ) {
-                player.setAllowFlight( DataUtils.getBool( "vanish." + playerUUID + ".previous.flight-state" ) );
+            if ( Settings.VANISH_RESET_FLIGHT.bool() ) {
+                player.setAllowFlight( YMLUtils.getData().getBool( "vanish." + playerUUID + ".previous.flight-state" ) );
             }
 
             // config: flight-speed
-            if ( ConfigUtils.getInt( "vanish.use.flight.speed" ) > 1 ) {
-                player.setFlySpeed( DataUtils.getFloat( "vanish." + playerUUID + ".previous.flight-speed" ) );
+            if ( Settings.VANISH_FLIGHT_SPEED.getFloat() > 1 ) {
+                player.setFlySpeed( YMLUtils.getData().getFloat( "vanish." + playerUUID + ".previous.flight-speed" ) );
             }
         }
 
         // config: night vision
-        if ( ConfigUtils.getBool( "vanish.use.night-vision" ) ) {
+        if ( Settings.VANISH_NIGHT_VISION.bool() ) {
             player.removePotionEffect( PotionEffectType.NIGHT_VISION );
-            if ( DataUtils.get( "vanish." + playerUUID + ".previous.night-vision" ) != null ) {
-                player.addPotionEffect( ( PotionEffect ) DataUtils.get( "vanish." + playerUUID + ".previous.night-vision" ) );
+            if ( YMLUtils.getData().get( "vanish." + playerUUID + ".previous.night-vision" ) != null ) {
+                player.addPotionEffect( ( PotionEffect ) YMLUtils.getData().get( "vanish." + playerUUID + ".previous.night-vision" ) );
             }
         }
 
         // config: see self
-        if ( ConfigUtils.getBool( "vanish.use.see-self") == false ) {
+        if ( Settings.VANISH_SEE_SELF.bool() == false ) {
             player.removePotionEffect( PotionEffectType.INVISIBILITY );
-            if ( DataUtils.get( "vanish." + playerUUID + ".previous.invisibility" ) != null ) {
-                player.addPotionEffect( ( PotionEffect ) DataUtils.get( "vanish." + playerUUID + ".previous.invisibility" ) );
+            if ( YMLUtils.getData().get( "vanish." + playerUUID + ".previous.invisibility" ) != null ) {
+                player.addPotionEffect( ( PotionEffect ) YMLUtils.getData().get( "vanish." + playerUUID + ".previous.invisibility" ) );
             }
 
             // config: skull helmet
-            if ( ConfigUtils.getBool( "vanish.use.skull-helmet" ) ) {
+            if ( Settings.VANISH_SKULL_HELMET.bool() ) {
                 ItemStack armor[] = new ItemStack[4];
                 armor[0] = player.getInventory().getBoots();
                 armor[1] = player.getInventory().getLeggings();
                 armor[2] = player.getInventory().getChestplate();
-                armor[3] = ( ItemStack ) DataUtils.get( "vanish." + playerUUID + ".previous.helmet" );
+                armor[3] = ( ItemStack ) YMLUtils.getData().get( "vanish." + playerUUID + ".previous.helmet" );
 
                 player.getInventory().setArmorContents( armor );
             }
         }
 
         // config: walk speed
-        if ( ConfigUtils.getInt( "vanish.use.walk-speed" ) > 1 ) {
-            player.setWalkSpeed( DataUtils.getFloat( "vanish." + playerUUID + ".previous.walk-speed" ) );
+        if ( Settings.VANISH_WALK_SPEED.getFloat() > 1 ) {
+            player.setWalkSpeed( YMLUtils.getData().getFloat( "vanish." + playerUUID + ".previous.walk-speed" ) );
         }
 
         // config: bossbar
-        if ( ConfigUtils.getBool( "vanish.use.bossbar.enable" ) ) {
+        if ( Settings.VANISH_BOSSBAR_ENABLE.bool() ) {
             BossbarUtils.removeBossbar( player );
         }
 
         // config (other-events): hunger
-        if ( ConfigUtils.getBool( "vanish.other-events.hunger.cancel" ) ) {
-            player.setFoodLevel( DataUtils.getInt( "vanish." + playerUUID + ".previous.hunger" ) );
+        if ( Settings.VANISH_EVENTS_HUNGER_CANCEL.bool() ) {
+            player.setFoodLevel( YMLUtils.getData().getInt( "vanish." + playerUUID + ".previous.hunger" ) );
         }
 
-        DataUtils.set( "vanish." + playerUUID, null );
-        DataUtils.save();
+        YMLUtils.getData().set( "vanish." + playerUUID, null );
+        YMLUtils.getData().save();
     }
 
 
 
     public static boolean checkVanished( Player player ) {
         String uuid = player.getUniqueId().toString();
-        if ( DataUtils.getBool( "vanish." + uuid + ".enabled" ) ) {
+        if ( YMLUtils.getData().getBool( "vanish." + uuid + ".enabled" ) ) {
             return true;
         }
         return false;
@@ -214,11 +234,11 @@ public class VanishUtils {
 
     public static int getVanishLevel( OfflinePlayer player ) {
         String uuid = player.getUniqueId().toString();
-        if ( DataUtils.getInt( "data." + uuid + ".level" ) == 0 ) {
-            DataUtils.set( "data." + uuid + ".level", getMaxVanishLevel( player ) );
+        if ( YMLUtils.getData().getInt( "data." + uuid + ".level" ) == 0 ) {
+            YMLUtils.getData().set( "data." + uuid + ".level", getMaxVanishLevel( player ) );
         }
 
-        return DataUtils.getInt( "data." + uuid + ".level" );
+        return YMLUtils.getData().getInt( "data." + uuid + ".level" );
     }
 
 
@@ -239,11 +259,11 @@ public class VanishUtils {
 
 
     public static int getMaxVanishLevel( OfflinePlayer target ) {
-        if ( VaultUtils.hasPerms( target, ConfigUtils.getStr( "vanish.level.5.permission" ) ) ) { return 5; }
-        if ( VaultUtils.hasPerms( target, ConfigUtils.getStr( "vanish.level.4.permission" ) ) ) { return 4; }
-        if ( VaultUtils.hasPerms( target, ConfigUtils.getStr( "vanish.level.3.permission" ) ) ) { return 3; }
-        if ( VaultUtils.hasPerms( target, ConfigUtils.getStr( "vanish.level.2.permission" ) ) ) { return 2; }
-        if ( VaultUtils.hasPerms( target, ConfigUtils.getStr( "vanish.permission" ) ) ) { return 1; }
+        if ( VaultUtils.hasPerms( target, Settings.VANISH_LEVEL_FIVE_PERMISSION.string() ) ) { return 5; }
+        if ( VaultUtils.hasPerms( target, Settings.VANISH_LEVEL_FOUR_PERMISSION.string() ) ) { return 4; }
+        if ( VaultUtils.hasPerms( target, Settings.VANISH_LEVEL_THREE_PERMISSION.string() ) ) { return 3; }
+        if ( VaultUtils.hasPerms( target, Settings.VANISH_LEVEL_TWO_PERMISSION.string() ) ) { return 2; }
+        if ( VaultUtils.hasPerms( target, Settings.VANISH_PERMISSION.string() ) ) { return 1; }
 
         return 0;
     }
@@ -254,7 +274,7 @@ public class VanishUtils {
     public static String[] getCurrentlyVanishedUUID() {
         ArrayList<String> uuid = new ArrayList<>();
 
-        for ( String key : DataUtils.getDataManager().getConfig().getKeys( true ) ) {
+        for ( String key : YMLUtils.getData().getConfig().getKeys( true ) ) {
             if ( key.contains( "vanish." ) ) {
                 String u = key.substring( 7 );
                 if ( u.indexOf( '.' ) != -1 ) {

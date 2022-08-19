@@ -7,7 +7,6 @@ import com.github.cyberryan1.skriptelements.conditions.types.RegularCondition;
 import com.github.cyberryan1.utils.VanishUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.eclipse.jdt.annotation.Nullable;
 
 public class CondPlayerVanished extends RegularCondition {
 
@@ -30,7 +29,7 @@ public class CondPlayerVanished extends RegularCondition {
     }
 
     @Override
-    public String toString( @Nullable Event event, boolean debug ) {
+    public String toString( Event event, boolean debug ) {
         return "%player% (1¦is|2¦is(n't¦ not)) vanished " + player.toString( event, debug );
     }
 }

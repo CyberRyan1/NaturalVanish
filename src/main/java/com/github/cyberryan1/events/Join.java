@@ -1,7 +1,12 @@
 package com.github.cyberryan1.events;
 
-import com.github.cyberryan1.utils.*;
-
+import com.github.cyberryan1.cybercore.CyberCore;
+import com.github.cyberryan1.cybercore.utils.CoreUtils;
+import com.github.cyberryan1.cybercore.utils.VaultUtils;
+import com.github.cyberryan1.utils.BossbarUtils;
+import com.github.cyberryan1.utils.VanishUtils;
+import com.github.cyberryan1.utils.settings.Settings;
+import com.github.cyberryan1.utils.yml.YMLUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,11 +22,11 @@ public class Join implements Listener {
         // Add the player to any players who wouldn't be able to see the player
         if ( VanishUtils.checkVanished( event.getPlayer() ) ) {
             for ( Player p : Bukkit.getOnlinePlayers() ) {
-                if ( VaultUtils.hasPerms( p, ConfigUtils.getStr( "vanish.permission" ) ) == false ) {
-                    p.hidePlayer( Utilities.getPlugin(), event.getPlayer() );
+                if ( VaultUtils.hasPerms( p, Settings.VANISH_PERMISSION.string() ) == false ) {
+                    p.hidePlayer( CyberCore.getPlugin(), event.getPlayer() );
                 }
                 else if ( VanishUtils.getVanishLevel( event.getPlayer() ) <= VanishUtils.getMaxVanishLevel( p ) == false ) {
-                    p.hidePlayer( Utilities.getPlugin(), event.getPlayer() );
+                    p.hidePlayer( CyberCore.getPlugin(), event.getPlayer() );
                 }
             }
         }
@@ -30,7 +35,7 @@ public class Join implements Listener {
         for ( Player p : Bukkit.getOnlinePlayers() ) {
             if ( VanishUtils.checkVanished( p ) ) {
                 if ( VanishUtils.getVanishLevel( p ) > VanishUtils.getMaxVanishLevel( event.getPlayer() ) ) {
-                    event.getPlayer().hidePlayer( Utilities.getPlugin(), p );
+                    event.getPlayer().hidePlayer( CyberCore.getPlugin(), p );
                 }
             }
         }
@@ -39,59 +44,84 @@ public class Join implements Listener {
 
         // checking if the player's vanish was enabled or disabled while they were offline
         // was disabled while offline
-        if ( DataUtils.getBool( "data.offline.disabled." + playerUUID ) ) {
-            DataUtils.set( "data.offline.disabled." + playerUUID, null );
-            DataUtils.save();
+        if ( YMLUtils.getData().getBool( "data.offline.disabled." + playerUUID ) ) {
+            YMLUtils.getData().set( "data.offline.disabled." + playerUUID, null );
+            YMLUtils.getData().save();
 
             VanishUtils.disableVanish( event.getPlayer() );
-            event.getPlayer().sendMessage( ConfigUtils.getColoredStr( "vanish.toggle.target.off-disabled" ) );
+            CoreUtils.sendMsg( event.getPlayer(), Settings.VANISH_TOGGLE_TARGET_OFFLINE_DISABLED_MSG.coloredString() );
         }
 
 
 
         // was enabled while offline
-        else if ( DataUtils.getBool( "data.offline.enabled." + playerUUID ) ) {
-            DataUtils.set( "data.offline.enabled." + playerUUID, null );
-            DataUtils.save();
+        else if ( YMLUtils.getData().getBool( "data.offline.enabled." + playerUUID ) ) {
+            YMLUtils.getData().set( "data.offline.enabled." + playerUUID, null );
+            YMLUtils.getData().save();
 
             VanishUtils.enableVanish( event.getPlayer() );
-            event.getPlayer().sendMessage( ConfigUtils.getColoredStr( "vanish.toggle.target.off-enabled" ) );
+            CoreUtils.sendMsg( event.getPlayer(), Settings.VANISH_TOGGLE_TARGET_OFFLINE_ENABLED_MSG.coloredString() );
         }
 
 
 
         // level was changed while offline
-        if ( DataUtils.getBool( "data.offline.level-changed." + playerUUID ) ) {
-            DataUtils.set( "data.offline.level-changed." + playerUUID, null );
-            DataUtils.save();
+        if ( YMLUtils.getData().getBool( "data.offline.level-changed." + playerUUID ) ) {
+            YMLUtils.getData().set( "data.offline.level-changed." + playerUUID, null );
+            YMLUtils.getData().save();
 
-            event.getPlayer().sendMessage( Utilities.getColored( "&7Your vanish level has been set to &a" + DataUtils.getStr( "data." + playerUUID + ".level" ) + " &7while you were offline" ) );
+            event.getPlayer().sendMessage( CoreUtils.getColored( "&7Your vanish level has been set to &a" +
+                    YMLUtils.getData().getStr( "data." + playerUUID + ".level" ) + " &7while you were offline" ) );
         }
 
 
 
         // checking if the player who joined is vanished and adding that vanish
-        if ( DataUtils.getBool( "vanish." + event.getPlayer().getUniqueId().toString() + ".enabled" ) ) {
+        if ( YMLUtils.getData().getBool( "vanish." + event.getPlayer().getUniqueId().toString() + ".enabled" ) ) {
             int vanishLevel = VanishUtils.getVanishLevel( event.getPlayer() );
             for ( Player p : Bukkit.getServer().getOnlinePlayers() ) {
-                if ( p.hasPermission( ConfigUtils.getStr( "vanish.permission" ) ) == false ) {
-                    p.hidePlayer( Utilities.getPlugin(), event.getPlayer() );
+                if ( VaultUtils.hasPerms( p, Settings.VANISH_PERMISSION.string() ) == false ) {
+                    p.hidePlayer( CyberCore.getPlugin(), event.getPlayer() );
                 }
                 else if ( vanishLevel <= VanishUtils.getMaxVanishLevel( p ) ) {
-                    p.sendMessage( ConfigUtils.getColoredStr( "vanish.level." + vanishLevel + ".enable-msg", event.getPlayer() ) );
+                    String enableMsg;
+                    switch ( vanishLevel ) {
+                        case 2: {
+                            enableMsg = Settings.VANISH_LEVEL_TWO_ENABLE_MSG.coloredString();
+                            break;
+                        }
+                        case 3: {
+                            enableMsg = Settings.VANISH_LEVEL_THREE_ENABLE_MSG.coloredString();
+                            break;
+                        }
+                        case 4: {
+                            enableMsg = Settings.VANISH_LEVEL_FOUR_ENABLE_MSG.coloredString();
+                            break;
+                        }
+                        case 5: {
+                            enableMsg = Settings.VANISH_LEVEL_FIVE_ENABLE_MSG.coloredString();
+                            break;
+                        }
+                        default: {
+                            enableMsg = Settings.VANISH_LEVEL_ONE_ENABLE_MSG.coloredString();
+                            break;
+                        }
+                    }
+
+                    CoreUtils.sendMsg( p, enableMsg.replace( "[PLAYER]", event.getPlayer().getName() ) );
                 }
                 else {
-                    p.hidePlayer( Utilities.getPlugin(), event.getPlayer() );
+                    p.hidePlayer( CyberCore.getPlugin(), event.getPlayer() );
                 }
             }
 
             // if to cancel the join message or not (config)
-            if ( ConfigUtils.getBool( "vanish.join.cancel-msg" ) ) {
+            if ( Settings.VANISH_JOIN_CANCEL_MSG.bool() ) {
                 event.setJoinMessage( null );
             }
 
             // if to set the player's bossbar or not (config)
-            if ( ConfigUtils.getBool( "vanish.use.bossbar.enable" ) ) {
+            if ( Settings.VANISH_BOSSBAR_ENABLE.bool() ) {
                 BossbarUtils.addBossbar( event.getPlayer() );
             }
         }

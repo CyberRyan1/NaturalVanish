@@ -8,6 +8,7 @@ import com.github.cyberryan1.cybercore.utils.VaultUtils;
 import com.github.cyberryan1.events.*;
 import com.github.cyberryan1.skriptelements.conditions.RegisterConditions;
 import com.github.cyberryan1.utils.BossbarUtils;
+import com.github.cyberryan1.utils.settings.Settings;
 import com.github.cyberryan1.utils.yml.YMLUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -24,6 +25,8 @@ public final class NaturalVanish extends JavaPlugin {
         // Initialize CyberCore
         CyberCore.setPlugin( this );
         new VaultUtils();
+        CyberCore.setPrimaryColor( Settings.PRIMARY_COLOR.coloredString() );
+        CyberCore.setSecondaryColor( Settings.SECONDARY_COLOR.coloredString() );
 
         // Update/reload config/data files
         YMLUtils.getConfig().getYMLManager().initialize();

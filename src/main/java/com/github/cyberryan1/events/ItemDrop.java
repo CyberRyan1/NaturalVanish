@@ -1,9 +1,9 @@
 package com.github.cyberryan1.events;
 
-import com.github.cyberryan1.utils.ConfigUtils;
+import com.github.cyberryan1.cybercore.utils.CoreUtils;
+import com.github.cyberryan1.cybercore.utils.VaultUtils;
 import com.github.cyberryan1.utils.VanishUtils;
-
-import com.github.cyberryan1.utils.VaultUtils;
+import com.github.cyberryan1.utils.settings.Settings;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -12,13 +12,16 @@ public class ItemDrop implements Listener {
 
     @EventHandler
     public void onPlayerDrop( PlayerDropItemEvent event ) {
-        if ( VanishUtils.checkVanished( event.getPlayer() ) && ConfigUtils.getBool( "vanish.other-events.item-drop.cancel" ) ) {
-            if ( ConfigUtils.getBool( "vanish.other-events.item-drop.bypass" ) == false ||
-                    VaultUtils.hasPerms( event.getPlayer(), ConfigUtils.getStr( "vanish.other-events.item-drop.bypass-perm" ) ) == false ) {
+        if ( VanishUtils.checkVanished( event.getPlayer() ) == false ) { return; }
+
+        if ( Settings.VANISH_EVENTS_DROP_CANCEL.bool() ) {
+            if ( Settings.VANISH_EVENTS_DROP_BYPASS.bool() == false ||
+                    VaultUtils.hasPerms( event.getPlayer(), Settings.VANISH_EVENTS_DROP_BYPASS_PERMISSION.string() ) == false ) {
                 event.setCancelled( true );
 
-                if ( ConfigUtils.getStr( "vanish.other-events.item-drop.cancel-msg" ).equals( "" ) == false ) {
-                    event.getPlayer().sendMessage( ConfigUtils.getColoredStr( "vanish.other-events.item-drop.cancel-msg", event.getPlayer() ) );
+                String cancelMsg = Settings.VANISH_EVENTS_DROP_CANCEL_MSG.coloredString();
+                if ( cancelMsg.isBlank() == false ) {
+                    CoreUtils.sendMsg( event.getPlayer(), cancelMsg.replace( "[PLAYER]", event.getPlayer().getName() ) );
                 }
             }
         }

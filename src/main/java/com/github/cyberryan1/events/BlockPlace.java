@@ -1,9 +1,10 @@
 package com.github.cyberryan1.events;
 
-import com.github.cyberryan1.utils.ConfigUtils;
-import com.github.cyberryan1.utils.Utilities;
+import com.github.cyberryan1.cybercore.CyberCore;
+import com.github.cyberryan1.cybercore.utils.CoreUtils;
+import com.github.cyberryan1.cybercore.utils.VaultUtils;
 import com.github.cyberryan1.utils.VanishUtils;
-import com.github.cyberryan1.utils.VaultUtils;
+import com.github.cyberryan1.utils.settings.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,15 +19,18 @@ public class BlockPlace implements Listener {
     @EventHandler
     public void onBlockPlace( BlockPlaceEvent event ) {
         if ( VanishUtils.checkVanished( event.getPlayer() ) ) {
-            if ( ConfigUtils.getBool( "vanish.other-events.build.cancel" ) ) {
-                if ( ConfigUtils.getBool( "vanish.other-events.build.bypass" ) == false ||
-                        VaultUtils.hasPerms( event.getPlayer(), ConfigUtils.getStr( "vanish.other-events.build.bypass-perm" ) ) == false ) {
+            if ( Settings.VANISH_EVENTS_BUILD_CANCEL.bool() ) {
+                if ( Settings.VANISH_EVENTS_BUILD_BYPASS.bool() == false ||
+                        VaultUtils.hasPerms( event.getPlayer(), Settings.VANISH_EVENTS_BUILD_BYPASS_PERMISSION.string() ) ) {
                     event.setCancelled( true );
 
-                    if ( ConfigUtils.getStr( "vanish.other-events.build.cancel-msg" ).equals( "" ) == false &&
-                            cooldown.contains( event.getPlayer().getName() ) == false ) {
+                    String cancelMsg = Settings.VANISH_EVENTS_BUILD_CANCEL_MSG.coloredString();
+                    if ( cancelMsg.isBlank() == false && cooldown.contains( event.getPlayer().getName() ) == false ) {
                         cooldown.add( event.getPlayer().getName() );
-                        Bukkit.getScheduler().runTaskLater( Utilities.getPlugin(), () -> {
+                        cancelMsg = cancelMsg.replace( "[PLAYER]", event.getPlayer().getName() );
+                        CoreUtils.sendMsg( event.getPlayer(), cancelMsg );
+
+                        Bukkit.getScheduler().runTaskLater( CyberCore.getPlugin(), () -> {
                             cooldown.remove( event.getPlayer().getName() );
                         }, 40L );
                     }

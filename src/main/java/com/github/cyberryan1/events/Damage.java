@@ -1,7 +1,7 @@
 package com.github.cyberryan1.events;
 
-import com.github.cyberryan1.utils.ConfigUtils;
 import com.github.cyberryan1.utils.VanishUtils;
+import com.github.cyberryan1.utils.settings.Settings;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,7 +15,7 @@ public class Damage implements Listener {
             Player player = ( Player ) event.getEntity();
 
             if ( VanishUtils.checkVanished( player ) ) {
-                if ( ConfigUtils.getBool( "vanish.other-events.damage.cancel" ) ) {
+                if ( Settings.VANISH_EVENTS_DAMAGE_CANCEL.bool() ) {
                     event.setCancelled( true );
                 }
             }
