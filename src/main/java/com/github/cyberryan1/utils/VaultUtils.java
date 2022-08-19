@@ -8,6 +8,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+/**
+ * @deprecated
+ */
 public class VaultUtils {
 
     public static Economy economy = null;

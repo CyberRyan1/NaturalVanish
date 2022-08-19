@@ -3,6 +3,9 @@ package com.github.cyberryan1.utils;
 import com.github.cyberryan1.managers.DataManager;
 import org.bukkit.configuration.file.FileConfiguration;
 
+/**
+ * @deprecated
+ */
 public class DataUtils {
 
     private static DataManager data;

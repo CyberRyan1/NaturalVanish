@@ -7,6 +7,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+/**
+ * @deprecated
+ */
 public class ConfigUtils {
 
     private static ConfigManager config;

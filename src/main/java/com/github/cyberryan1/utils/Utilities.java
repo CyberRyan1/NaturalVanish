@@ -14,6 +14,9 @@ import org.bukkit.plugin.PluginManager;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
+/**
+ * @deprecated
+ */
 public class Utilities {
 
     private static Plugin plugin;
