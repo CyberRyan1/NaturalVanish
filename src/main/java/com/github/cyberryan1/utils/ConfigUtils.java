@@ -1,7 +1,7 @@
 package com.github.cyberryan1.utils;
 
+import com.github.cyberryan1.cybercore.utils.CoreUtils;
 import com.github.cyberryan1.managers.ConfigManager;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -70,7 +70,7 @@ public class ConfigUtils {
     public static String getColoredStr( String path ) {
         if ( config.getConfig().getString( path ) == null ) { return null; }
         checkWarn( path );
-        return ChatColor.translateAlternateColorCodes( '&', config.getConfig().getString( path ) );
+        return CoreUtils.getColored( config.getConfig().getString( path ) );
     }
 
 

@@ -1,10 +1,9 @@
 package com.github.cyberryan1.utils;
 
+import com.github.cyberryan1.cybercore.utils.CoreUtils;
 import com.github.cyberryan1.managers.ConfigManager;
 import com.github.cyberryan1.managers.DataManager;
-
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -37,7 +36,9 @@ public class Utilities {
 
 
     // gets the colored value of the string
-    public static String getColored( String in ) { return ChatColor.translateAlternateColorCodes( '&', in ); }
+    public static String getColored( String in ) {
+        return CoreUtils.getColored( in );
+    }
 
 
 

@@ -91,5 +91,10 @@
             <version>dev37c</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.cyberryan1</groupId>
+            <artifactId>CyberCore</artifactId>
+            <version>1.4.16.2</version>
+        </dependency>
     </dependencies>
 </project>
