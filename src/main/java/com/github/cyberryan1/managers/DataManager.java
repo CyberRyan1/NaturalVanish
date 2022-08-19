@@ -10,6 +10,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.logging.Level;
 
+/**
+ * @deprecated
+ */
 public class DataManager {
 
     private NaturalVanish plugin;
