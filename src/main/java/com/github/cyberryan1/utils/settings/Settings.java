@@ -16,19 +16,19 @@ public enum Settings {
     VANISH_CANT_USE_MSG( "vanish.cant-use-msg", "string" ),
 
     // Vanish Use Settings
-    VANISH_FLIGHT_ENABLE( "vanish.flight.enable", "boolean" ),
-    VANISH_RESET_FLIGHT( "vanish.flight.reset", "boolean" ),
-    VANISH_FLIGHT_SPEED( "vanish.flight.speed", "float" ),
+    VANISH_FLIGHT_ENABLE( "vanish.use.flight.enable", "boolean" ),
+    VANISH_RESET_FLIGHT( "vanish.use.flight.reset", "boolean" ),
+    VANISH_FLIGHT_SPEED( "vanish.use.flight.speed", "float" ),
 
-    VANISH_WALK_SPEED( "vanish.walk-speed", "float" ),
-    VANISH_NIGHT_VISION( "vanish.night-vision", "boolean" ),
-    VANISH_SEE_SELF( "vanish.see-self", "boolean" ),
-    VANISH_SKULL_HELMET( "vanish.skull-helmet", "boolean" ),
+    VANISH_WALK_SPEED( "vanish.use.walk-speed", "float" ),
+    VANISH_NIGHT_VISION( "vanish.use.night-vision", "boolean" ),
+    VANISH_SEE_SELF( "vanish.use.see-self", "boolean" ),
+    VANISH_SKULL_HELMET( "vanish.use.skull-helmet", "boolean" ),
 
-    VANISH_BOSSBAR_ENABLE( "vanish.bossbar.enable", "boolean" ),
-    VANISH_BOSSBAR_TITLE( "vanish.bossbar.title", "string" ),
-    VANISH_BOSSBAR_COLOR( "vanish.bossbar.color", "string" ),
-    VANISH_BOSSBAR_PERCENT( "vanish.bossbar.percent", "int" ),
+    VANISH_BOSSBAR_ENABLE( "vanish.use.bossbar.enable", "boolean" ),
+    VANISH_BOSSBAR_TITLE( "vanish.use.bossbar.title", "string" ),
+    VANISH_BOSSBAR_COLOR( "vanish.use.bossbar.color", "string" ),
+    VANISH_BOSSBAR_PERCENT( "vanish.use.bossbar.percent", "int" ),
 
     // Vanish Setlevel Settings
     VANISH_SETLEVEL_PERMISSION( "vanish.level.permission", "string" ),
