@@ -8,6 +8,7 @@ import com.github.cyberryan1.utils.yml.YMLUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -108,6 +109,7 @@ public class VanishUtils {
                 armor[1] = player.getInventory().getLeggings();
                 armor[2] = player.getInventory().getChestplate();
                 armor[3] = CoreItemUtils.getPlayerSkull( player );
+                armor[3].addUnsafeEnchantment( Enchantment.BINDING_CURSE, 1 );
 
                 player.getInventory().setArmorContents( armor );
             }

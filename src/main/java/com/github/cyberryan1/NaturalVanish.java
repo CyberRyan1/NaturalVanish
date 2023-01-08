@@ -62,7 +62,6 @@ public final class NaturalVanish extends JavaPlugin {
     }
 
     private void loadEvents() {
-        this.getServer().getPluginManager().registerEvents( new InventoryClick(), this );
         this.getServer().getPluginManager().registerEvents( new Join(), this );
         this.getServer().getPluginManager().registerEvents( new Leave(), this );
         this.getServer().getPluginManager().registerEvents( new ItemDrop(), this );
