@@ -1,6 +1,6 @@
 package com.github.cyberryan1.utils;
 
-import com.github.cyberryan1.cybercore.CyberCore;
+import com.github.cyberryan1.cybercore.spigot.CyberCore;
 import com.github.cyberryan1.utils.settings.Settings;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;

@@ -1,8 +1,8 @@
 package com.github.cyberryan1.events;
 
-import com.github.cyberryan1.cybercore.CyberCore;
-import com.github.cyberryan1.cybercore.utils.CoreUtils;
-import com.github.cyberryan1.cybercore.utils.VaultUtils;
+import com.github.cyberryan1.cybercore.spigot.CyberCore;
+import com.github.cyberryan1.cybercore.spigot.utils.CyberMsgUtils;
+import com.github.cyberryan1.cybercore.spigot.utils.CyberVaultUtils;
 import com.github.cyberryan1.utils.VanishUtils;
 import com.github.cyberryan1.utils.settings.Settings;
 import org.bukkit.Bukkit;
@@ -21,12 +21,12 @@ public class ItemPickup implements Listener {
 
         if ( Settings.VANISH_EVENTS_DROP_CANCEL.bool() ) {
             if ( Settings.VANISH_EVENTS_DROP_BYPASS.bool() == false ||
-                    VaultUtils.hasPerms( event.getPlayer(), Settings.VANISH_EVENTS_DROP_BYPASS_PERMISSION.string() ) == false ) {
+                    CyberVaultUtils.hasPerms( event.getPlayer(), Settings.VANISH_EVENTS_DROP_BYPASS_PERMISSION.string() ) == false ) {
                 event.setCancelled( true );
 
                 String cancelMsg = Settings.VANISH_EVENTS_DROP_CANCEL_MSG.coloredString();
                 if ( cancelMsg.isBlank() == false ) {
-                    CoreUtils.sendMsg( event.getPlayer(), cancelMsg.replace( "[PLAYER]", event.getPlayer().getName() ) );
+                    CyberMsgUtils.sendMsg( event.getPlayer(), cancelMsg.replace( "[PLAYER]", event.getPlayer().getName() ) );
 
                     cooldown.add( event.getPlayer().getName() );
                     Bukkit.getServer().getScheduler().scheduleSyncDelayedTask( CyberCore.getPlugin(), new Runnable() {

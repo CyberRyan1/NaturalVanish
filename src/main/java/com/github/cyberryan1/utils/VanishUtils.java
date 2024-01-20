@@ -1,8 +1,8 @@
 package com.github.cyberryan1.utils;
 
-import com.github.cyberryan1.cybercore.CyberCore;
-import com.github.cyberryan1.cybercore.utils.CoreItemUtils;
-import com.github.cyberryan1.cybercore.utils.VaultUtils;
+import com.github.cyberryan1.cybercore.spigot.CyberCore;
+import com.github.cyberryan1.cybercore.spigot.utils.CyberItemUtils;
+import com.github.cyberryan1.cybercore.spigot.utils.CyberVaultUtils;
 import com.github.cyberryan1.utils.settings.Settings;
 import com.github.cyberryan1.utils.yml.YMLUtils;
 import org.bukkit.Bukkit;
@@ -54,7 +54,7 @@ public class VanishUtils {
         vanishedMsg = vanishedMsg.replace( "[PLAYER]", player.getName() );
 
         for ( Player p : Bukkit.getOnlinePlayers() ) {
-            if ( VaultUtils.hasPerms( p, usePerm ) == false ) {
+            if ( CyberVaultUtils.hasPerms( p, usePerm ) == false ) {
                 p.hidePlayer( CyberCore.getPlugin(), player );
             }
             else if ( playerLevel <= getMaxVanishLevel( p ) ) {
@@ -108,7 +108,7 @@ public class VanishUtils {
                 armor[0] = player.getInventory().getBoots();
                 armor[1] = player.getInventory().getLeggings();
                 armor[2] = player.getInventory().getChestplate();
-                armor[3] = CoreItemUtils.getPlayerSkull( player );
+                armor[3] = CyberItemUtils.getPlayerSkull( player );
                 armor[3].addUnsafeEnchantment( Enchantment.BINDING_CURSE, 1 );
 
                 player.getInventory().setArmorContents( armor );
@@ -261,11 +261,11 @@ public class VanishUtils {
 
 
     public static int getMaxVanishLevel( OfflinePlayer target ) {
-        if ( VaultUtils.hasPerms( target, Settings.VANISH_LEVEL_FIVE_PERMISSION.string() ) ) { return 5; }
-        if ( VaultUtils.hasPerms( target, Settings.VANISH_LEVEL_FOUR_PERMISSION.string() ) ) { return 4; }
-        if ( VaultUtils.hasPerms( target, Settings.VANISH_LEVEL_THREE_PERMISSION.string() ) ) { return 3; }
-        if ( VaultUtils.hasPerms( target, Settings.VANISH_LEVEL_TWO_PERMISSION.string() ) ) { return 2; }
-        if ( VaultUtils.hasPerms( target, Settings.VANISH_PERMISSION.string() ) ) { return 1; }
+        if ( CyberVaultUtils.hasPerms( target, Settings.VANISH_LEVEL_FIVE_PERMISSION.string() ) ) { return 5; }
+        if ( CyberVaultUtils.hasPerms( target, Settings.VANISH_LEVEL_FOUR_PERMISSION.string() ) ) { return 4; }
+        if ( CyberVaultUtils.hasPerms( target, Settings.VANISH_LEVEL_THREE_PERMISSION.string() ) ) { return 3; }
+        if ( CyberVaultUtils.hasPerms( target, Settings.VANISH_LEVEL_TWO_PERMISSION.string() ) ) { return 2; }
+        if ( CyberVaultUtils.hasPerms( target, Settings.VANISH_PERMISSION.string() ) ) { return 1; }
 
         return 0;
     }

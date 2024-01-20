@@ -39,7 +39,7 @@ public class SettingsEntry {
                 this.d = YMLUtils.getConfig().getDouble( path );
                 break;
             case "long":
-                this.l = YMLUtils.getConfig().getYMLManager().getConfig().getLong( path );
+                this.l = YMLUtils.getConfig().getLong( path );
                 break;
             case "boolean":
                 this.b = YMLUtils.getConfig().getBool( path );

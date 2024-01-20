@@ -1,8 +1,9 @@
 package com.github.cyberryan1.events;
 
-import com.github.cyberryan1.cybercore.CyberCore;
-import com.github.cyberryan1.cybercore.utils.CoreUtils;
-import com.github.cyberryan1.cybercore.utils.VaultUtils;
+import com.github.cyberryan1.cybercore.spigot.CyberCore;
+import com.github.cyberryan1.cybercore.spigot.utils.CyberColorUtils;
+import com.github.cyberryan1.cybercore.spigot.utils.CyberMsgUtils;
+import com.github.cyberryan1.cybercore.spigot.utils.CyberVaultUtils;
 import com.github.cyberryan1.utils.BossbarUtils;
 import com.github.cyberryan1.utils.VanishUtils;
 import com.github.cyberryan1.utils.settings.Settings;
@@ -22,7 +23,7 @@ public class Join implements Listener {
         // Add the player to any players who wouldn't be able to see the player
         if ( VanishUtils.checkVanished( event.getPlayer() ) ) {
             for ( Player p : Bukkit.getOnlinePlayers() ) {
-                if ( VaultUtils.hasPerms( p, Settings.VANISH_PERMISSION.string() ) == false ) {
+                if ( CyberVaultUtils.hasPerms( p, Settings.VANISH_PERMISSION.string() ) == false ) {
                     p.hidePlayer( CyberCore.getPlugin(), event.getPlayer() );
                 }
                 else if ( VanishUtils.getVanishLevel( event.getPlayer() ) <= VanishUtils.getMaxVanishLevel( p ) == false ) {
@@ -49,7 +50,7 @@ public class Join implements Listener {
             YMLUtils.getData().save();
 
             VanishUtils.disableVanish( event.getPlayer() );
-            CoreUtils.sendMsg( event.getPlayer(), Settings.VANISH_TOGGLE_TARGET_OFFLINE_DISABLED_MSG.coloredString() );
+            CyberMsgUtils.sendMsg( event.getPlayer(), Settings.VANISH_TOGGLE_TARGET_OFFLINE_DISABLED_MSG.coloredString() );
         }
 
 
@@ -60,7 +61,7 @@ public class Join implements Listener {
             YMLUtils.getData().save();
 
             VanishUtils.enableVanish( event.getPlayer() );
-            CoreUtils.sendMsg( event.getPlayer(), Settings.VANISH_TOGGLE_TARGET_OFFLINE_ENABLED_MSG.coloredString() );
+            CyberMsgUtils.sendMsg( event.getPlayer(), Settings.VANISH_TOGGLE_TARGET_OFFLINE_ENABLED_MSG.coloredString() );
         }
 
 
@@ -70,7 +71,7 @@ public class Join implements Listener {
             YMLUtils.getData().set( "data.offline.level-changed." + playerUUID, null );
             YMLUtils.getData().save();
 
-            event.getPlayer().sendMessage( CoreUtils.getColored( "&7Your vanish level has been set to &a" +
+            event.getPlayer().sendMessage( CyberColorUtils.getColored( "&7Your vanish level has been set to &a" +
                     YMLUtils.getData().getStr( "data." + playerUUID + ".level" ) + " &7while you were offline" ) );
         }
 
@@ -80,7 +81,7 @@ public class Join implements Listener {
         if ( YMLUtils.getData().getBool( "vanish." + event.getPlayer().getUniqueId().toString() + ".enabled" ) ) {
             int vanishLevel = VanishUtils.getVanishLevel( event.getPlayer() );
             for ( Player p : Bukkit.getServer().getOnlinePlayers() ) {
-                if ( VaultUtils.hasPerms( p, Settings.VANISH_PERMISSION.string() ) == false ) {
+                if ( CyberVaultUtils.hasPerms( p, Settings.VANISH_PERMISSION.string() ) == false ) {
                     p.hidePlayer( CyberCore.getPlugin(), event.getPlayer() );
                 }
                 else if ( vanishLevel <= VanishUtils.getMaxVanishLevel( p ) ) {
@@ -108,7 +109,7 @@ public class Join implements Listener {
                         }
                     }
 
-                    CoreUtils.sendMsg( p, enableMsg.replace( "[PLAYER]", event.getPlayer().getName() ) );
+                    CyberMsgUtils.sendMsg( p, enableMsg.replace( "[PLAYER]", event.getPlayer().getName() ) );
                 }
                 else {
                     p.hidePlayer( CyberCore.getPlugin(), event.getPlayer() );

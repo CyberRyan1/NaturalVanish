@@ -1,8 +1,8 @@
 package com.github.cyberryan1.events;
 
-import com.github.cyberryan1.cybercore.CyberCore;
-import com.github.cyberryan1.cybercore.utils.CoreUtils;
-import com.github.cyberryan1.cybercore.utils.VaultUtils;
+import com.github.cyberryan1.cybercore.spigot.CyberCore;
+import com.github.cyberryan1.cybercore.spigot.utils.CyberMsgUtils;
+import com.github.cyberryan1.cybercore.spigot.utils.CyberVaultUtils;
 import com.github.cyberryan1.utils.VanishUtils;
 import com.github.cyberryan1.utils.settings.Settings;
 import org.bukkit.Bukkit;
@@ -26,14 +26,14 @@ public class DamageByEntity implements Listener {
 
             if ( VanishUtils.checkVanished( attacker ) &&
                     ( Settings.VANISH_EVENTS_PVP_BYPASS.bool() == false
-                            | VaultUtils.hasPerms( attacker, Settings.VANISH_EVENTS_PVP_BYPASS_PERMISSION.string() ) ) ) {
+                            | CyberVaultUtils.hasPerms( attacker, Settings.VANISH_EVENTS_PVP_BYPASS_PERMISSION.string() ) ) ) {
                 event.setCancelled( true );
 
                 String cancelMsg = Settings.VANISH_EVENTS_PVP_CANCEL_MSG.coloredString();
                 if ( cancelMsg.isBlank() == false && cooldown.contains( attacker.getName() ) == false ) {
                     cancelMsg = cancelMsg.replace( "[PLAYER]", attacker.getName() )
                             .replace( "[ARG]", victim.getName() );
-                    CoreUtils.sendMsg( attacker, cancelMsg );
+                    CyberMsgUtils.sendMsg( attacker, cancelMsg );
                     cooldown.add( attacker.getName() );
 
                     Bukkit.getScheduler().runTaskLater( CyberCore.getPlugin(), () -> {

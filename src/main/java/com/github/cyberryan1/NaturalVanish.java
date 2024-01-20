@@ -2,9 +2,10 @@ package com.github.cyberryan1;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAddon;
-import com.github.cyberryan1.cybercore.CyberCore;
-import com.github.cyberryan1.cybercore.utils.CoreUtils;
-import com.github.cyberryan1.cybercore.utils.VaultUtils;
+import com.github.cyberryan1.cybercore.spigot.CyberCore;
+import com.github.cyberryan1.cybercore.spigot.utils.CyberColorUtils;
+import com.github.cyberryan1.cybercore.spigot.utils.CyberLogUtils;
+import com.github.cyberryan1.cybercore.spigot.utils.CyberVaultUtils;
 import com.github.cyberryan1.events.*;
 import com.github.cyberryan1.skriptelements.conditions.RegisterConditions;
 import com.github.cyberryan1.utils.BossbarUtils;
@@ -24,13 +25,13 @@ public final class NaturalVanish extends JavaPlugin {
     public void onEnable() {
         // Initialize CyberCore
         CyberCore.setPlugin( this );
-        new VaultUtils();
-        CyberCore.setPrimaryColor( Settings.PRIMARY_COLOR.coloredString() );
-        CyberCore.setSecondaryColor( Settings.SECONDARY_COLOR.coloredString() );
+        new CyberVaultUtils();
+        CyberColorUtils.setPrimaryColor( Settings.PRIMARY_COLOR.coloredString() );
+        CyberColorUtils.setSecondaryColor( Settings.SECONDARY_COLOR.coloredString() );
 
         // Update/reload config/data files
-        YMLUtils.getConfig().getYMLManager().initialize();
-        YMLUtils.getData().getYMLManager().initialize();
+        YMLUtils.getConfig().getYmlLoader().initialize();
+        YMLUtils.getData().getYmlLoader().initialize();
         YMLUtils.getData().sendPathNotFoundWarns( false );
 
         // Remove all bossbars
@@ -42,13 +43,13 @@ public final class NaturalVanish extends JavaPlugin {
             try {
                 addon.loadClasses( "com.github.cyberryan1", "skriptelements" );
             } catch ( IOException e ) {
-                CoreUtils.logWarn( "Could not enable as a skript addon, will still enable without this syntax!" );
+                CyberLogUtils.logWarn( "Could not enable as a skript addon, will still enable without this syntax!" );
                 enabled = false;
             }
-            CoreUtils.logInfo( "Enabled as a skript addon" );
+            CyberLogUtils.logInfo( "Enabled as a skript addon" );
             RegisterConditions.register();
         } catch ( NoClassDefFoundError error ) {
-            CoreUtils.logWarn( "Could not enable as a skript addon, will still enable without this syntax!" );
+            CyberLogUtils.logWarn( "Could not enable as a skript addon, will still enable without this syntax!" );
             enabled = false;
         }
 

@@ -1,8 +1,8 @@
 package com.github.cyberryan1.events;
 
-import com.github.cyberryan1.cybercore.CyberCore;
-import com.github.cyberryan1.cybercore.utils.CoreUtils;
-import com.github.cyberryan1.cybercore.utils.VaultUtils;
+import com.github.cyberryan1.cybercore.spigot.CyberCore;
+import com.github.cyberryan1.cybercore.spigot.utils.CyberMsgUtils;
+import com.github.cyberryan1.cybercore.spigot.utils.CyberVaultUtils;
 import com.github.cyberryan1.utils.VanishUtils;
 import com.github.cyberryan1.utils.settings.Settings;
 import org.bukkit.Bukkit;
@@ -62,7 +62,7 @@ public class Interact implements Listener {
 
                     String silentMsg = Settings.VANISH_EVENTS_CHEST_SILENT_MSG.coloredString();
                     if ( silentMsg.isBlank() == false ) {
-                        CoreUtils.sendMsg( player, silentMsg.replace( "[PLAYER]", player.getName() ) );
+                        CyberMsgUtils.sendMsg( player, silentMsg.replace( "[PLAYER]", player.getName() ) );
                     }
                 }
 
@@ -70,12 +70,12 @@ public class Interact implements Listener {
                 else if ( Settings.VANISH_EVENTS_INTERACT_CANCEL.bool() && redstoneBlocks.contains( event.getClickedBlock().getType() ) ) {
 
                     if ( Settings.VANISH_EVENTS_INTERACT_BYPASS.bool() == false
-                            || VaultUtils.hasPerms( player, Settings.VANISH_EVENTS_INTERACT_BYPASS_PERMISSION.string() ) == false ) {
+                            || CyberVaultUtils.hasPerms( player, Settings.VANISH_EVENTS_INTERACT_BYPASS_PERMISSION.string() ) == false ) {
                         event.setCancelled( true );
 
                         String cancelMsg = Settings.VANISH_EVENTS_INTERACT_CANCEL_MSG.coloredString();
                         if ( cancelMsg.isBlank() == false ) {
-                            CoreUtils.sendMsg( player, cancelMsg.replace( "[PLAYER]", player.getName() ) );
+                            CyberMsgUtils.sendMsg( player, cancelMsg.replace( "[PLAYER]", player.getName() ) );
                         }
                     }
                 }
@@ -87,13 +87,13 @@ public class Interact implements Listener {
             Player player = event.getPlayer();
 
             if ( Settings.VANISH_EVENTS_INTERACT_BYPASS.bool() == false
-                    || VaultUtils.hasPerms( player, Settings.VANISH_EVENTS_INTERACT_BYPASS_PERMISSION.string() ) == false ) {
+                    || CyberVaultUtils.hasPerms( player, Settings.VANISH_EVENTS_INTERACT_BYPASS_PERMISSION.string() ) == false ) {
                 event.setCancelled( true );
 
                 String cancelMsg = Settings.VANISH_EVENTS_INTERACT_CANCEL_MSG.coloredString();
                 if ( cancelMsg.isBlank() == false  &&
                         physicalCooldown.contains( event.getPlayer().getName() ) == false ) {
-                    CoreUtils.sendMsg( player, cancelMsg.replace( "[PLAYER]", player.getName() ) );
+                    CyberMsgUtils.sendMsg( player, cancelMsg.replace( "[PLAYER]", player.getName() ) );
 
                     physicalCooldown.add( player.getName() );
                     Bukkit.getServer().getScheduler().scheduleSyncDelayedTask( CyberCore.getPlugin(), new Runnable() {
